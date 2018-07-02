@@ -233,7 +233,7 @@ int main(int argn, char ** argv)
     startTime = clock_seconds();
     crc32 = folly::crc32((const uint8_t *)data, kNumBytes);
     duration = clock_seconds() - startTime;
-    printf(" folly::crc32()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" folly::crc32()    : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
 
     //
@@ -242,7 +242,7 @@ int main(int argn, char ** argv)
     startTime = clock_seconds();
     crc32 = folly::crc32c((const uint8_t *)data, kNumBytes);
     duration = clock_seconds() - startTime;
-    printf(" folly::crc32c()  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" folly::crc32c()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
 
     printf("\n");
