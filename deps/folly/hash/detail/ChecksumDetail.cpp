@@ -269,7 +269,8 @@ _128_bits_at_a_time:
   x1 = x0;
   x0 = _mm_clmulepi64_si128(_mm_and_si128(x0, mask32), barrett_reduction_constants, 0x00);
   x0 = _mm_clmulepi64_si128(_mm_and_si128(x0, mask32), barrett_reduction_constants, 0x10);
-  return _mm_cvtsi128_si32(_mm_srli_si128(_mm_xor_si128(x0, x1), 4));
+  uint32_t crc32 = _mm_cvtsi128_si32(_mm_srli_si128(_mm_xor_si128(x0, x1), 4));
+  return ~crc32;
 }
 
 #endif

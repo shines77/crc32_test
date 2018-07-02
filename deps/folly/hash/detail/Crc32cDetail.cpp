@@ -283,7 +283,7 @@ uint32_t crc32c_hw(const uint8_t* buf, size_t len, uint32_t crc) {
 
   // compute the crc for up to seven trailing bytes
   crc32_detail::align_to_8(len, crc0, next);
-  return (uint32_t)crc0;
+  return (uint32_t)~crc0;
 }
 
 #else

@@ -79,7 +79,7 @@ static uint64_t crc32c_hw_x64(const char * data, size_t length)
     static const size_t kStepLen = sizeof(uint64_t);
     static const uint64_t kOneMask = 0xFFFFFFFFFFFFFFFFULL;
 
-    uint64_t crc64 = 0;
+    uint64_t crc64 = ~0;
 
     uint64_t data64;
     const char * data_end = data + length;
@@ -103,7 +103,7 @@ static uint64_t crc32c_hw_x64(const char * data, size_t length)
         }
     } while (1);
 
-    return crc64;
+    return ~crc64;
 }
 
 #endif // CRC32_IS_X86_64
@@ -111,7 +111,7 @@ static uint64_t crc32c_hw_x64(const char * data, size_t length)
 static uint32_t crc32c_hw_u32(const char * data, size_t length)
 {
     assert(data != nullptr);
-    uint32_t crc32 = 0;
+    uint32_t crc32 = ~0;
 
     static const size_t kStepLen = sizeof(uint32_t);
     uint32_t * src = (uint32_t *)data;
@@ -129,7 +129,7 @@ static uint32_t crc32c_hw_u32(const char * data, size_t length)
         crc32 = _mm_crc32_u8(crc32, *src8);
         ++src8;
     }
-    return crc32;
+    return ~crc32;
 }
 
 #if CRC32_IS_X86_64
@@ -137,7 +137,7 @@ static uint32_t crc32c_hw_u32(const char * data, size_t length)
 static uint32_t crc32c_hw_u64(const char * data, size_t length)
 {
     assert(data != nullptr);
-    uint64_t crc64 = 0;
+    uint64_t crc64 = ~0;
 
     static const size_t kStepLen = sizeof(uint64_t);
     uint64_t * src = (uint64_t *)data;
@@ -155,7 +155,7 @@ static uint32_t crc32c_hw_u64(const char * data, size_t length)
         crc32 = _mm_crc32_u8(crc32, data[i]);
         ++i;
     }
-    return crc32;
+    return ~crc32;
 }
 
 #endif // CRC32_IS_X86_64
@@ -165,7 +165,7 @@ static uint32_t crc32c_hw_u64(const char * data, size_t length)
 static uint32_t crc32c_hw_u64_v2(const char * data, size_t length)
 {
     assert(data != nullptr);
-    uint64_t crc64 = 0;
+    uint64_t crc64 = ~0;
 
     static const size_t kStepLen = sizeof(uint64_t);
     uint64_t * src = (uint64_t *)data;
@@ -184,7 +184,7 @@ static uint32_t crc32c_hw_u64_v2(const char * data, size_t length)
         crc32 = _mm_crc32_u8(crc32, *src8);
         ++src8;
     }
-    return crc32;
+    return ~crc32;
 }
 
 #endif // CRC32_IS_X86_64
