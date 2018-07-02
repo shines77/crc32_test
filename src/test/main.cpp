@@ -70,28 +70,28 @@ int main(int argn, char ** argv)
     startTime = seconds();
     crc = crc32_bitwise(data, NumBytes);
     duration = seconds() - startTime;
-    printf("bitwise          : CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("bitwise           : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
         crc, duration, (NumBytes / (1024 * 1024)) / duration);
 
     // half-byte
     startTime = seconds();
     crc = crc32_halfbyte(data, NumBytes);
     duration = seconds() - startTime;
-    printf("half-byte        : CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("half-byte         : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 
     // one byte at once (without lookup tables)
     startTime = seconds();
     crc = crc32_1byte_tableless(data, NumBytes);
     duration = seconds() - startTime;
-    printf("tableless (byte) : CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("tableless (byte)  : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 
     // one byte at once (without lookup tables)
     startTime = seconds();
     crc = crc32_1byte_tableless2(data, NumBytes);
     duration = seconds() - startTime;
-    printf("tableless (byte2): CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("tableless (byte2) : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 
 #ifdef CRC32_USE_LOOKUP_TABLE_BYTE
@@ -99,7 +99,7 @@ int main(int argn, char ** argv)
     startTime = seconds();
     crc = crc32_1byte(data, NumBytes);
     duration = seconds() - startTime;
-    printf("  1 byte  at once: CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("  1 byte  at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif
 
@@ -108,7 +108,7 @@ int main(int argn, char ** argv)
     startTime = seconds();
     crc = crc32_4bytes(data, NumBytes);
     duration = seconds() - startTime;
-    printf("  4 bytes at once: CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("  4 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
 
@@ -117,14 +117,14 @@ int main(int argn, char ** argv)
     startTime = seconds();
     crc = crc32_8bytes(data, NumBytes);
     duration = seconds() - startTime;
-    printf("  8 bytes at once: CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("  8 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 
     // eight bytes at once, unrolled 4 times (=> 32 bytes per loop)
     startTime = seconds();
     crc = crc32_4x8bytes(data, NumBytes);
     duration = seconds() - startTime;
-    printf("4x8 bytes at once: CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("4x8 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
 
@@ -133,14 +133,14 @@ int main(int argn, char ** argv)
     startTime = seconds();
     crc = crc32_16bytes(data, NumBytes);
     duration = seconds() - startTime;
-    printf(" 16 bytes at once: CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf(" 16 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 
     // sixteen bytes at once
     startTime = seconds();
     crc = crc32_16bytes_prefetch(data, NumBytes, 0, 256);
     duration = seconds() - startTime;
-    printf(" 16 bytes at once: CRC = %08X, %.3fs, %.3f MB/s (including prefetching)\n",
+    printf(" 16 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s (including prefetching)\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
 
@@ -157,10 +157,14 @@ int main(int argn, char ** argv)
         bytesProcessed += chunkSize;
     }
     duration = seconds() - startTime;
-    printf("    chunked      : CRC = %08X, %.3fs, %.3f MB/s\n",
+    printf("    chunked       : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
            crc, duration, (NumBytes / (1024 * 1024)) / duration);
 
     if (data != nullptr)
         delete[] data;
+
+#if (defined(_WIN32) || defined(WIN32) || defined(OS_WINDOWS) || defined(_WINDOWS_))
+    ::system("pause");
+#endif
     return 0;
 }
