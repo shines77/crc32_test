@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd;cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="src\FastCRC32">
+      <UniqueIdentifier>{53c6610e-04a6-4cea-9deb-8e81d76280e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Folly">
+      <UniqueIdentifier>{7c4d6cf1-e0cb-4f42-ab62-bc45a07711bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\crc32">
+      <UniqueIdentifier>{f48f5d4b-51c0-49f5-920e-3e9ec5e8c7a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\test">
+      <UniqueIdentifier>{a38110f4-5ae5-462d-aac9-ccfa8fdd9110}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\deps\FastCRC32\Crc32.cpp">
+      <Filter>src\FastCRC32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\test\main.cpp">
+      <Filter>src\test</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\deps\FastCRC32\Crc32.h">
+      <Filter>src\FastCRC32</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
