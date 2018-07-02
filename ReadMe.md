@@ -87,6 +87,8 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.214 sec(s), 4781.217 MB/s
 ```
 
-## Credits (作者)
+## Credits (开发者)
 
-`shines77`: [https://github.com/shines77/crc32_test](https://github.com/shines77/crc32_test)
+* `shines77`: [https://github.com/shines77/crc32_test](https://github.com/shines77/crc32_test)
+* ` Stephan Brumme`: [http://create.stephan-brumme.com/about.html](http://create.stephan-brumme.com/about.html)
+* `Facebook`: [https://github.com/facebook](https://github.com/facebook)
