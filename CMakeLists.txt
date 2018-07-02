@@ -109,6 +109,9 @@ include_directories(deps)
 
 set(SOURCE_FILES
     deps/FastCRC32/Crc32.cpp
+    deps/folly/hash/detail/ChecksumDetail.cpp
+    deps/folly/hash/detail/Crc32cDetail.cpp
+    deps/folly/hash/Checksum.cpp
     src/test/main.cpp
     )
 
