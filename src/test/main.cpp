@@ -203,6 +203,15 @@ int main(int argn, char ** argv)
     printf("    chunked        : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
 
+    //
+    // folly::crc32c()
+    //
+    startTime = clock_seconds();
+    crc32 = folly::crc32c((const uint8_t *)data, kNumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" folly::crc32c()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+
 #if __SSE4_2__
 
     //
@@ -236,14 +245,30 @@ int main(int argn, char ** argv)
     printf(" folly::crc32()    : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
 
+#if __SSE4_2__
+
     //
-    // folly::crc32c()
+    // jimi::crc32c_hw_x86()
     //
     startTime = clock_seconds();
-    crc32 = folly::crc32c((const uint8_t *)data, kNumBytes);
+    crc32 = jimi::crc32c_hw_x86(data, kNumBytes);
     duration = clock_seconds() - startTime;
-    printf(" folly::crc32c()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" crc32c_hw_x86()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+
+#if CRC32_IS_X86_64
+    //
+    // jimi::crc32c_hw_x64()
+    //
+    startTime = clock_seconds();
+    uint64_t crc64 = jimi::crc32c_hw_x64(data, kNumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" crc32c_hw_x64()   : CRC32 = 0x%08X%08X, %.3f sec(s), %.3f MB/s\n",
+           (uint32_t)(crc64 >> 32), (uint32_t)(crc64 & 0xFFFFFFFFU),
+           duration, (kNumBytes / (1024 * 1024)) / duration);
+#endif // CRC32_IS_X86_64
+
+#endif // __SSE4_2__
 
     printf("\n");
 
