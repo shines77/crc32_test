@@ -30,9 +30,9 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 ## Benchmark (性能测试)
 
 1. `Windows`
-    * OS: `Windows 10 Professional Build 1709` - 64 bit
-    * Compiler: `Vc 2015 update 3`
-    * CPU: `AMD Ryzen 1700X` @ `3.40GHz`
+    * `Windows 10 Professional Build 1709` - 64 bit
+    * `AMD Ryzen 1700X` @ `3.40GHz`
+    * `Vc 2015 update 3`
 
 ```shell
  bitwise           : CRC32 = 0x221F390F, 10.846 sec(s), 94.411 MB/s
@@ -59,9 +59,9 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 
 2. `Linux`
 
-    * OS: `Ubuntu 14.04 Server` - 64 bit
-    * Compiler: `g++ 5.5.0`
-    * CPU: `Intel Dual E5-2680 v3` @ `2.00GHz`
+    * `Ubuntu 14.04 Server` - 64 bit
+    * `Intel Dual E5-2680 v3` @ `2.00GHz`
+    *  `g++ 5.5.0`
 
 ```shell
  bitwise           : CRC32 = 0x221F390F, 15.335 sec(s), 66.776 MB/s
