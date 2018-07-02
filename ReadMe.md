@@ -11,12 +11,12 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 
 ## Reference (引用)
 
-`Fast CRC32`: [http://create.stephan-brumme.com/crc32/]()
+`Fast CRC32`: [http://create.stephan-brumme.com/crc32/](http://create.stephan-brumme.com/crc32/)
 
 * `/FastCRC32/Crc32.h`
 * `/FastCRC32/Crc32.cpp`
 
-`Folly`: [https://github.com/facebook/folly]()
+`Folly`: [https://github.com/facebook/folly](https://github.com/facebook/folly)
 
 * `/folly/hash/Checksum.h`
 
@@ -28,6 +28,8 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 * Boost.preprocessor
 
 ## Benchmark (性能测试)
+
+1. Windows
 
 * `Windows 10 Professional Build 1709` - 64 bit
 * `AMD Ryzen 1700X` @ `3.40GHz`
@@ -56,6 +58,8 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.170 sec(s), 6017.945 MB/s
 ```
 
+2. Linux
+
 * `Ubuntu 14.04 Server` - 64 bit
 * `Intel Dual E5-2680 v3` @ `2.00GHz`
 *  `g++ 5.5.0`
@@ -82,3 +86,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  crc32c_hw_x86()   : CRC32 = 0x193A2B0B, 0.368 sec(s), 2779.222 MB/s
  crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.214 sec(s), 4781.217 MB/s
 ```
+
+## Credits (作者)
+
+`shines77`: [https://github.com/shines77/crc32_test](https://github.com/shines77/crc32_test)
