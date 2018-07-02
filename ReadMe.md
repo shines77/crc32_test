@@ -1,11 +1,11 @@
 
 # crc32_test
 
-## [English]
+## Introduction
 
 A test routine for fast `crc32` and `crc32c` algorithm.
 
-## [Chinese/中文]
+## 简介 [Chinese]
 
 一个关于 `crc32` 和 `crc32c` 算法的测试程序。
 
@@ -32,7 +32,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 1. Windows
 
 * `Windows 10 Professional Build 1709` - 64 bit
-* `AMD Ryzen 1700X` @ `3.40GHz`
+* `AMD Ryzen 1700X` @ `3.40GHz` (Support `SSE 4.2`)
 * `Vc 2015 update 3`
 
 ```shell
@@ -61,7 +61,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 2. Linux
 
 * `Ubuntu 14.04 Server` - 64 bit
-* `Intel Dual E5-2680 v3` @ `2.00GHz`
+* `Intel Dual E5-2680 v3` @ `2.00GHz` (Support `SSE 4.2`)
 *  `g++ 5.5.0`
 
 ```shell
@@ -87,8 +87,12 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.214 sec(s), 4781.217 MB/s
 ```
 
-## Credits (开发者)
+## Contributors (贡献者)
 
-* `shines77`: [https://github.com/shines77/crc32_test](https://github.com/shines77/crc32_test)
+* `shines77`: [https://github.com/shines77](https://github.com/shines77)
 * ` Stephan Brumme`: [http://create.stephan-brumme.com/about.html](http://create.stephan-brumme.com/about.html)
 * `Facebook`: [https://github.com/facebook](https://github.com/facebook)
+
+## Official website (官网)
+
+* `Github`: [https://github.com/shines77/crc32_test](https://github.com/shines77/crc32_test)
