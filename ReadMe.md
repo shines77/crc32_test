@@ -36,7 +36,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 1. Windows
 
 * `Windows 10 Professional Build 1709` - 64 bit
-* `AMD Ryzen 1700X` @ `3.40GHz` (Support `SSE 4.2`)
+* `AMD Ryzen 1700X` @ `3.40GHz`, Boost on `3.8GHz` (Support `SSE 4.2`)
 * `Vc 2015 update 3`
 
 ```shell
@@ -62,10 +62,39 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.170 sec(s), 6017.945 MB/s
 ```
 
-2. Linux
+2. Windows
+
+* `Windows 10 Professional Build 1803` - 64 bit
+* `Intel i5-4210M` @ `2.60GHz`, Boost on `3.2GHz` (Support `SSE 4.2`)
+* `Vc 2015 update 3`
+
+```shell
+ bitwise           : CRC32 = 0x221F390F, 12.319 sec(s), 83.127 MB/s
+ half-byte         : CRC32 = 0x221F390F, 5.766 sec(s), 177.605 MB/s
+ tableless (byte)  : CRC32 = 0x221F390F, 4.574 sec(s), 223.851 MB/s
+ tableless (byte2) : CRC32 = 0x221F390F, 5.891 sec(s), 173.824 MB/s
+  1 byte  at once  : CRC32 = 0x221F390F, 2.523 sec(s), 405.815 MB/s
+  4 bytes at once  : CRC32 = 0x221F390F, 1.071 sec(s), 955.966 MB/s
+  8 bytes at once  : CRC32 = 0x221F390F, 0.766 sec(s), 1336.391 MB/s
+ 4x8 bytes at once : CRC32 = 0x221F390F, 0.743 sec(s), 1378.817 MB/s
+ 16 bytes at once  : CRC32 = 0x221F390F, 0.575 sec(s), 1780.454 MB/s
+ 16 bytes at once  : CRC32 = 0x221F390F, 0.585 sec(s), 1751.354 MB/s (including prefetching)
+    chunked        : CRC32 = 0x221F390F, 0.584 sec(s), 1754.880 MB/s
+
+ folly::crc32()    : CRC32 = 0x221F390F, 0.125 sec(s), 8182.784 MB/s
+
+ crc32c_hw_u32()   : CRC32 = 0xB85FB04A, 0.283 sec(s), 3613.655 MB/s
+ crc32c_hw_u64()   : CRC32 = 0xB85FB04A, 0.145 sec(s), 7057.738 MB/s
+ folly::crc32c()   : CRC32 = 0xB85FB04A, 0.160 sec(s), 6391.166 MB/s
+
+ crc32c_hw_x86()   : CRC32 = 0x193A2B0B, 0.279 sec(s), 3674.769 MB/s
+ crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.146 sec(s), 7029.146 MB/s
+```
+
+3. Linux
 
 * `Ubuntu 14.04 Server` - 64 bit
-* `Intel Dual E5-2680 v3` @ `2.00GHz` (Support `SSE 4.2`)
+* `Dual Intel Xeon E5-2683 v3` @ `2.00GHz`, Boost on `3.0GHz` (Support `SSE 4.2`)
 *  `g++ 5.5.0`
 
 ```shell
