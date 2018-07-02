@@ -108,6 +108,7 @@ include_directories(src/unittest)
 include_directories(deps)
 
 set(SOURCE_FILES
+    dpes/FastCRC32/Crc32.cpp
     src/test/main.cpp
     )
 
