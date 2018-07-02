@@ -20,6 +20,10 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 
 * `/folly/hash/Checksum.h`
 
+## Reference Article (参考文章)
+
+`zhihu.com`: [https://www.zhihu.com/question/280252145](https://www.zhihu.com/question/280252145)
+
 ## Dependent library (依赖库)
 
 `Boost library`:
