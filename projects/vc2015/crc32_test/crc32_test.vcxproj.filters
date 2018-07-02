@@ -17,6 +17,12 @@
     <Filter Include="src\test">
       <UniqueIdentifier>{a38110f4-5ae5-462d-aac9-ccfa8fdd9110}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Folly\hash">
+      <UniqueIdentifier>{df123f42-2340-4db8-ac54-c387d9fbc700}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Folly\hash\detail">
+      <UniqueIdentifier>{4a1d4cf2-2a0e-4487-b9d6-4e19aa5dac1b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\deps\FastCRC32\Crc32.cpp">
@@ -28,10 +34,37 @@
     <ClCompile Include="..\..\..\src\main\crc32\crc32c.h">
       <Filter>src\crc32</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\deps\folly\hash\Checksum.cpp">
+      <Filter>src\Folly\hash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deps\folly\hash\detail\ChecksumDetail.cpp">
+      <Filter>src\Folly\hash\detail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\deps\folly\hash\detail\Crc32cDetail.cpp">
+      <Filter>src\Folly\hash\detail</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\deps\FastCRC32\Crc32.h">
       <Filter>src\FastCRC32</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deps\folly\CPortability.h">
+      <Filter>src\Folly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deps\folly\CpuId.h">
+      <Filter>src\Folly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deps\folly\Portability.h">
+      <Filter>src\Folly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deps\folly\hash\Checksum.h">
+      <Filter>src\Folly\hash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deps\folly\hash\detail\ChecksumDetail.h">
+      <Filter>src\Folly\hash\detail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\deps\folly\folly-config.h">
+      <Filter>src\Folly</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

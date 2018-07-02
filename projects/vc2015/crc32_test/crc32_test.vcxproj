@@ -155,11 +155,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\deps\FastCRC32\Crc32.cpp" />
+    <ClCompile Include="..\..\..\deps\folly\hash\Checksum.cpp" />
+    <ClCompile Include="..\..\..\deps\folly\hash\detail\ChecksumDetail.cpp" />
+    <ClCompile Include="..\..\..\deps\folly\hash\detail\Crc32cDetail.cpp" />
     <ClCompile Include="..\..\..\src\main\crc32\crc32c.h" />
     <ClCompile Include="..\..\..\src\test\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\deps\FastCRC32\Crc32.h" />
+    <ClInclude Include="..\..\..\deps\folly\CPortability.h" />
+    <ClInclude Include="..\..\..\deps\folly\CpuId.h" />
+    <ClInclude Include="..\..\..\deps\folly\folly-config.h" />
+    <ClInclude Include="..\..\..\deps\folly\hash\Checksum.h" />
+    <ClInclude Include="..\..\..\deps\folly\hash\detail\ChecksumDetail.h" />
+    <ClInclude Include="..\..\..\deps\folly\Portability.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
