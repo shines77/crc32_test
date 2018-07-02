@@ -24,8 +24,8 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 
 `Boost library`:
 
-* Boost.crc
-* Boost.preprocessor
+* boost.crc
+* boost.preprocessor
 
 ## Benchmark (性能测试)
 
