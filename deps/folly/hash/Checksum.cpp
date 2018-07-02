@@ -125,7 +125,7 @@ crc32_sw(const uint8_t* data, size_t nbytes, uint32_t startingChecksum) {
 
 } // namespace detail
 
-uint32_t crc32c(const uint8_t *data, size_t nbytes, uint32_t startingChecksum /*= ~0U */) {
+uint32_t crc32c(const uint8_t* data, size_t nbytes, uint32_t startingChecksum /*= ~0U */) {
   if (detail::crc32c_hw_supported()) {
     return detail::crc32c_hw(data, nbytes, startingChecksum);
   } else {
