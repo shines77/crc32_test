@@ -12,10 +12,6 @@
 
 #include <assert.h>
 
-#ifndef __SSE4_2__
-#define __SSE4_2__      1
-#endif
-
 #ifdef __SSE4_2__
 #ifdef _MSC_VER
 #include <nmmintrin.h>  // For SSE 4.2

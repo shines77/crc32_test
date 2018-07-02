@@ -19,12 +19,12 @@
 #include <ctime>
 #endif
 
+#ifndef __SSE4_2__
+#define __SSE4_2__  1
+#endif
+
 #include <FastCRC32/Crc32.h>
 #include "crc32/crc32c.h"
-
-#ifndef __SSE4_2__
-#define __SSE4_2__      1
-#endif
 #include <folly/hash/Checksum.h>
 
 #ifndef __COMPILER_BARRIER
