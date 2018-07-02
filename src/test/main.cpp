@@ -203,6 +203,8 @@ int main(int argn, char ** argv)
     printf("    chunked        : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
 
+    printf("\n");
+
     //
     // folly::crc32()
     //
@@ -211,6 +213,8 @@ int main(int argn, char ** argv)
     duration = clock_seconds() - startTime;
     printf(" folly::crc32()    : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+
+    printf("\n");
 
 #if __SSE4_2__
 
@@ -244,6 +248,8 @@ int main(int argn, char ** argv)
     duration = clock_seconds() - startTime;
     printf(" folly::crc32c()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+
+    printf("\n");
 
 #if __SSE4_2__
 
