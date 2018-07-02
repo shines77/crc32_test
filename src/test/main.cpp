@@ -20,6 +20,15 @@
 #endif
 
 #include "FastCRC32/Crc32.h"
+#include "crc32/crc32c.h"
+
+#ifndef __COMPILER_BARRIER
+#if defined(_MSC_VER) || defined(__ICL) || defined(__INTEL_COMPILER)
+#define __COMPILER_BARRIER()        _ReadWriteBarrier()
+#else
+#define __COMPILER_BARRIER()        asm volatile ("" : : : "memory")
+#endif
+#endif
 
 // //////////////////////////////////////////////////////////
 // test code
@@ -31,8 +40,10 @@ const size_t NumBytes = 1024 * 1024 * 1024;
 const size_t DefaultChunkSize = 4 * 1024;
 
 // timing
-static double seconds()
+static double clock_seconds()
 {
+    __COMPILER_BARRIER();
+
 //#if defined(_MSC_VER) || defined(__CYGWIN__)
 #if defined(_WIN32) || defined(_WIN64)
     LARGE_INTEGER frequency, now;
@@ -44,121 +55,174 @@ static double seconds()
     clock_gettime(CLOCK_REALTIME, &now);
     return now.tv_sec + now.tv_nsec / 1000000000.0;
 #endif
+
+    __COMPILER_BARRIER();
 }
 
 int main(int argn, char ** argv)
 {
-    printf("Please wait ...\n");
+    printf("Please wait ...\n\n");
 
     uint32_t randomNumber = 0x27121978U;
 
     // initialize
     char * data = new char[NumBytes];
-    if (data != nullptr) {
-        for (size_t i = 0; i < NumBytes; i++) {
-            data[i] = char(randomNumber & 0xFF);
-            // simple LCG, see http://en.wikipedia.org/wiki/Linear_congruential_generator
-            randomNumber = 1664525 * randomNumber + 1013904223;
-        }
+    if (data == nullptr) {
+        printf("Error: Out of memory ...\n\n");
+        return 0;
+    }
+
+    for (size_t i = 0; i < NumBytes; i++) {
+        data[i] = char(randomNumber & 0xFF);
+        // simple LCG, see http://en.wikipedia.org/wiki/Linear_congruential_generator
+        randomNumber = 1664525 * randomNumber + 1013904223;
     }
 
     // re-use variables
     double startTime, duration;
-    uint32_t crc;
+    uint32_t crc32;
 
+    //
     // bitwise
-    startTime = seconds();
-    crc = crc32_bitwise(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("bitwise           : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-        crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_bitwise(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" bitwise           : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+        crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 
+    //
     // half-byte
-    startTime = seconds();
-    crc = crc32_halfbyte(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("half-byte         : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_halfbyte(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" half-byte         : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 
+    //
     // one byte at once (without lookup tables)
-    startTime = seconds();
-    crc = crc32_1byte_tableless(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("tableless (byte)  : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_1byte_tableless(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" tableless (byte)  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 
+    //
     // one byte at once (without lookup tables)
-    startTime = seconds();
-    crc = crc32_1byte_tableless2(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("tableless (byte2) : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_1byte_tableless2(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" tableless (byte2) : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 
 #ifdef CRC32_USE_LOOKUP_TABLE_BYTE
+    //
     // one byte at once
-    startTime = seconds();
-    crc = crc32_1byte(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("  1 byte  at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_1byte(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf("  1 byte  at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif
 
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
+    //
     // four bytes at once
-    startTime = seconds();
-    crc = crc32_4bytes(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("  4 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_4bytes(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf("  4 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
 
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
+    //
     // eight bytes at once
-    startTime = seconds();
-    crc = crc32_8bytes(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("  8 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_8bytes(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf("  8 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 
+    //
     // eight bytes at once, unrolled 4 times (=> 32 bytes per loop)
-    startTime = seconds();
-    crc = crc32_4x8bytes(data, NumBytes);
-    duration = seconds() - startTime;
-    printf("4x8 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_4x8bytes(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" 4x8 bytes at once : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
 
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
+    //
     // sixteen bytes at once
-    startTime = seconds();
-    crc = crc32_16bytes(data, NumBytes);
-    duration = seconds() - startTime;
-    printf(" 16 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_16bytes(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" 16 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 
+    //
     // sixteen bytes at once
-    startTime = seconds();
-    crc = crc32_16bytes_prefetch(data, NumBytes, 0, 256);
-    duration = seconds() - startTime;
-    printf(" 16 bytes at once : CRC = %08X, %.3f sec(s), %.3f MB/s (including prefetching)\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    //
+    startTime = clock_seconds();
+    crc32 = crc32_16bytes_prefetch(data, NumBytes, 0, 256);
+    duration = clock_seconds() - startTime;
+    printf(" 16 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s (including prefetching)\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
 
+    //
     // process in 4k chunks
-    startTime = seconds();
-    crc = 0; // also default parameter of crc32_xx functions
+    //
+    startTime = clock_seconds();
+    crc32 = 0; // also default parameter of crc32_xx functions
     size_t bytesProcessed = 0;
     while (bytesProcessed < NumBytes) {
         size_t bytesLeft = NumBytes - bytesProcessed;
         size_t chunkSize = (DefaultChunkSize < bytesLeft) ? DefaultChunkSize : bytesLeft;
 
-        crc = crc32_fast(data + bytesProcessed, chunkSize, crc);
+        crc32 = crc32_fast(data + bytesProcessed, chunkSize, crc32);
 
         bytesProcessed += chunkSize;
     }
-    duration = seconds() - startTime;
-    printf("    chunked       : CRC = %08X, %.3f sec(s), %.3f MB/s\n",
-           crc, duration, (NumBytes / (1024 * 1024)) / duration);
+    duration = clock_seconds() - startTime;
+    printf("    chunked        : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
+
+#if __SSE4_2__
+
+    //
+    // jimi::crc32c_hw_u32()
+    //
+    startTime = clock_seconds();
+    crc32 = jimi::crc32c_hw_u32(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" crc32c_hw_u32     : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
+
+#if CRC32_IS_X86_64
+    //
+    // jimi::crc32c_hw_u64_v2()
+    //
+    startTime = clock_seconds();
+    crc32 = jimi::crc32c_hw_u64_v2(data, NumBytes);
+    duration = clock_seconds() - startTime;
+    printf(" crc32c_hw_u64     : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, duration, (NumBytes / (1024 * 1024)) / duration);
+#endif // CRC32_IS_X86_64
+
+#endif // __SSE4_2__
+
+    printf("\n");
 
     if (data != nullptr)
         delete[] data;

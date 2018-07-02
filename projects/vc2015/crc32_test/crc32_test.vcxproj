@@ -155,6 +155,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\deps\FastCRC32\Crc32.cpp" />
+    <ClCompile Include="..\..\..\src\main\crc32\crc32c.h" />
     <ClCompile Include="..\..\..\src\test\main.cpp" />
   </ItemGroup>
   <ItemGroup>

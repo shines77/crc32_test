@@ -25,6 +25,9 @@
     <ClCompile Include="..\..\..\src\test\main.cpp">
       <Filter>src\test</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\main\crc32\crc32c.h">
+      <Filter>src\crc32</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\deps\FastCRC32\Crc32.h">
