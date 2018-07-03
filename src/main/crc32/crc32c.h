@@ -36,34 +36,40 @@ static uint32_t crc32c_hw_x86(const char * data, size_t length)
 {
     assert(data != nullptr);
 
-    static const uint32_t kStepLen = sizeof(uint32_t);
+    static const ssize_t kStepLen = sizeof(uint32_t);
     static const uint32_t kOneMask = 0xFFFFFFFFUL;
 
-    uint32_t crc32 = 0;
+    uint32_t crc32 = ~0;
 
     uint32_t data32;
     const char * data_end = data + length;
-    data32 = *(uint32_t *)(data);
-    data += kStepLen;
+    ssize_t remain = length;
 
     do {
-        if (likely(data <= data_end)) {
+        if (likely(remain >= kStepLen)) {
+            assert(data < data_end);
+            data32 = *(uint32_t *)(data);
             crc32 = _mm_crc32_u32(crc32, data32);
             data += kStepLen;
-            data32 = *(uint32_t *)(data);
+            remain -= kStepLen;
         }
         else {
-            assert(data > data_end);
-            uint32_t rest = (uint32_t)(kStepLen - (data - data_end));
-            assert(rest > 0 && rest < kStepLen);
-            uint32_t mask = kOneMask >> (rest * 8U);
-            data32 &= mask;
-            crc32 = _mm_crc32_u32(crc32, data32);
+            assert((data_end - data) >= 0 && (data_end - data) < kStepLen);
+            assert((data_end - data) == remain);
+            assert(remain >= 0);
+            if (likely(remain > 0)) {
+                data32 = *(uint32_t *)(data);
+                uint32_t rest = (uint32_t)(kStepLen - remain);
+                assert(rest > 0 && rest < (uint32_t)kStepLen);
+                uint32_t mask = kOneMask >> (rest * 8U);
+                data32 &= mask;
+                crc32 = _mm_crc32_u32(crc32, data32);
+            }
             break;
         }
     } while (1);
 
-    return crc32;
+    return ~crc32;
 }
 
 #if CRC32_IS_X86_64
@@ -72,29 +78,35 @@ static uint32_t crc32c_hw_x64(const char * data, size_t length)
 {
     assert(data != nullptr);
 
-    static const size_t kStepLen = sizeof(uint64_t);
+    static const ssize_t kStepLen = sizeof(uint64_t);
     static const uint64_t kOneMask = 0xFFFFFFFFFFFFFFFFULL;
 
     uint64_t crc64 = ~0;
 
     uint64_t data64;
     const char * data_end = data + length;
-    data64 = *(uint64_t *)(data);
-    data += kStepLen;
+    ssize_t remain = length;
 
     do {
-        if (likely(data <= data_end)) {
+        if (likely(remain >= kStepLen)) {
+            assert(data < data_end);
+            data64 = *(uint64_t *)(data);
             crc64 = _mm_crc32_u64(crc64, data64);
             data += kStepLen;
-            data64 = *(uint64_t *)(data);
+            remain -= kStepLen;
         }
         else {
-            assert(data > data_end);
-            size_t rest = (size_t)(kStepLen - (data - data_end));
-            assert(rest > 0 && rest < kStepLen);
-            uint64_t mask = kOneMask >> (rest * 8U);
-            data64 &= mask;
-            crc64 = _mm_crc32_u64(crc64, data64);
+            assert((data_end - data) >= 0 && (data_end - data) < kStepLen);
+            assert((data_end - data) == remain);
+            assert(remain >= 0);
+            if (likely(remain > 0)) {
+                data64 = *(uint64_t *)(data);
+                size_t rest = (size_t)(kStepLen - remain);
+                assert(rest > 0 && rest < (size_t)kStepLen);
+                uint64_t mask = kOneMask >> (rest * 8U);
+                data64 &= mask;
+                crc64 = _mm_crc32_u64(crc64, data64);
+            }
             break;
         }
     } while (1);

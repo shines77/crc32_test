@@ -8,19 +8,19 @@
     <Filter Include="src\FastCRC32">
       <UniqueIdentifier>{53c6610e-04a6-4cea-9deb-8e81d76280e3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Folly">
-      <UniqueIdentifier>{7c4d6cf1-e0cb-4f42-ab62-bc45a07711bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\crc32">
       <UniqueIdentifier>{f48f5d4b-51c0-49f5-920e-3e9ec5e8c7a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\test">
       <UniqueIdentifier>{a38110f4-5ae5-462d-aac9-ccfa8fdd9110}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Folly\hash">
+    <Filter Include="src\folly">
+      <UniqueIdentifier>{7c4d6cf1-e0cb-4f42-ab62-bc45a07711bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\folly\hash">
       <UniqueIdentifier>{df123f42-2340-4db8-ac54-c387d9fbc700}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Folly\hash\detail">
+    <Filter Include="src\folly\hash\detail">
       <UniqueIdentifier>{4a1d4cf2-2a0e-4487-b9d6-4e19aa5dac1b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -35,13 +35,13 @@
       <Filter>src\crc32</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\deps\folly\hash\Checksum.cpp">
-      <Filter>src\Folly\hash</Filter>
+      <Filter>src\folly\hash</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\deps\folly\hash\detail\ChecksumDetail.cpp">
-      <Filter>src\Folly\hash\detail</Filter>
+      <Filter>src\folly\hash\detail</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\deps\folly\hash\detail\Crc32cDetail.cpp">
-      <Filter>src\Folly\hash\detail</Filter>
+      <Filter>src\folly\hash\detail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -49,22 +49,22 @@
       <Filter>src\FastCRC32</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\deps\folly\CPortability.h">
-      <Filter>src\Folly</Filter>
+      <Filter>src\folly</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\deps\folly\CpuId.h">
-      <Filter>src\Folly</Filter>
+      <Filter>src\folly</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\deps\folly\Portability.h">
-      <Filter>src\Folly</Filter>
+      <Filter>src\folly</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\deps\folly\hash\Checksum.h">
-      <Filter>src\Folly\hash</Filter>
+      <Filter>src\folly\hash</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\deps\folly\hash\detail\ChecksumDetail.h">
-      <Filter>src\Folly\hash\detail</Filter>
+      <Filter>src\folly\hash\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\deps\folly\folly-config.h">
-      <Filter>src\Folly</Filter>
+      <Filter>src\folly</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
