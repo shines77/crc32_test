@@ -29,7 +29,12 @@
 
 #ifndef __COMPILER_BARRIER
 #if defined(_MSC_VER) || defined(__ICL) || defined(__INTEL_COMPILER)
+#if defined(_M_AMD64)
+#pragma intrinsic(_ReadWriteBarrier)
 #define __COMPILER_BARRIER()        _ReadWriteBarrier()
+#else
+#define __COMPILER_BARRIER()        (void)(0)
+#endif
 #else
 #define __COMPILER_BARRIER()        asm volatile ("" : : : "memory")
 #endif

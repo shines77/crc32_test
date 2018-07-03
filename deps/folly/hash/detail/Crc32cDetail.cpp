@@ -39,10 +39,12 @@
 #include <boost/preprocessor/arithmetic/sub.hpp>
 #include <boost/preprocessor/repetition/repeat_from_to.hpp>
 
+#include <assert.h>
+
 namespace folly {
 namespace detail {
 
-#if defined(FOLLY_X64) && FOLLY_SSE_PREREQ(4, 2)
+#if defined(FOLLY_X64) && (FOLLY_X64 != 0) && FOLLY_SSE_PREREQ(4, 2)
 
 namespace crc32_detail {
 
@@ -289,8 +291,27 @@ uint32_t crc32c_hw(const uint8_t* buf, size_t len, uint32_t crc) {
 #else
 
 uint32_t
-crc32c_hw(const uint8_t* /* buf */, size_t /* len */, uint32_t /* crc */) {
-  throw std::runtime_error("crc32_hw is not implemented on this platform");
+crc32c_hw(const uint8_t* data, size_t length, uint32_t crc32) {
+    //throw std::runtime_error("crc32_hw is not implemented on this platform");
+    assert(data != nullptr);
+
+    static const size_t kStepLen = sizeof(uint32_t);
+    uint32_t * src = (uint32_t *)data;
+    uint32_t * src_end = src + (length / kStepLen);
+
+    while (src < src_end) {
+        crc32 = _mm_crc32_u32(crc32, *src);
+        ++src;
+    }
+
+    unsigned char * src8 = (unsigned char *)src;
+    unsigned char * src8_end = (unsigned char *)(data + length);
+
+    while (src8 < src8_end) {
+        crc32 = _mm_crc32_u8(crc32, *src8);
+        ++src8;
+    }
+    return ~crc32;
 }
 
 #endif

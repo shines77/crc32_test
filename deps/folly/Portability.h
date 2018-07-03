@@ -74,7 +74,8 @@ constexpr bool kHasUnalignedAccess = false;
 #endif
 
 // detection for 64 bit
-#if defined(__x86_64__) || defined(_M_X64)
+#if defined(WIN64) || defined(_WIN64) || defined(_M_X64) || defined(_M_AMD64) \
+ || defined(__amd64__) || defined(__x86_64__)
 # define FOLLY_X64 1
 #else
 # define FOLLY_X64 0
