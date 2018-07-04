@@ -103,37 +103,37 @@ int main(int argn, char ** argv)
     // bitwise
     //
     startTime = clock_seconds();
-    crc32 = crc32_bitwise(data, kNumBytes);
+    crc32 = crc32_bitwise(data, kNumBytes / 16);
     duration = clock_seconds() - startTime;
     printf(" bitwise           : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / 16.0 / (1024 * 1024)) / duration);
 
     //
     // half-byte
     //
     startTime = clock_seconds();
-    crc32 = crc32_halfbyte(data, kNumBytes);
+    crc32 = crc32_halfbyte(data, kNumBytes / 8);
     duration = clock_seconds() - startTime;
     printf(" half-byte         : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / 8.0 / (1024 * 1024)) / duration);
 
     //
     // one byte at once (without lookup tables)
     //
     startTime = clock_seconds();
-    crc32 = crc32_1byte_tableless(data, kNumBytes);
+    crc32 = crc32_1byte_tableless(data, kNumBytes / 4);
     duration = clock_seconds() - startTime;
     printf(" tableless (byte)  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / 4.0 / (1024 * 1024)) / duration);
 
     //
     // one byte at once (without lookup tables)
     //
     startTime = clock_seconds();
-    crc32 = crc32_1byte_tableless2(data, kNumBytes);
+    crc32 = crc32_1byte_tableless2(data, kNumBytes / 2);
     duration = clock_seconds() - startTime;
     printf(" tableless (byte2) : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / 2.0 / (1024 * 1024)) / duration);
 
 #ifdef CRC32_USE_LOOKUP_TABLE_BYTE
     //
@@ -143,7 +143,7 @@ int main(int argn, char ** argv)
     crc32 = crc32_1byte(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf("  1 byte  at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 #endif
 
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
@@ -154,7 +154,7 @@ int main(int argn, char ** argv)
     crc32 = crc32_4bytes(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf("  4 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
 
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
@@ -165,7 +165,7 @@ int main(int argn, char ** argv)
     crc32 = crc32_8bytes(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf("  8 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
     //
     // eight bytes at once, unrolled 4 times (=> 32 bytes per loop)
@@ -174,7 +174,7 @@ int main(int argn, char ** argv)
     crc32 = crc32_4x8bytes(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" 4x8 bytes at once : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
 
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
@@ -185,7 +185,7 @@ int main(int argn, char ** argv)
     crc32 = crc32_16bytes(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" 16 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
     //
     // sixteen bytes at once
@@ -194,7 +194,7 @@ int main(int argn, char ** argv)
     crc32 = crc32_16bytes_prefetch(data, kNumBytes, 0, 256);
     duration = clock_seconds() - startTime;
     printf(" 16 bytes at once  : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s (including prefetching)\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
 
     //
@@ -213,7 +213,7 @@ int main(int argn, char ** argv)
     }
     duration = clock_seconds() - startTime;
     printf("    chunked        : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
     printf("\n");
 
@@ -224,7 +224,7 @@ int main(int argn, char ** argv)
     crc32 = folly::crc32((const uint8_t *)data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" folly::crc32()    : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
     printf("\n");
 
@@ -237,7 +237,7 @@ int main(int argn, char ** argv)
     crc32 = jimi::crc32c_hw_u32(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" crc32c_hw_u32()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
 #if CRC32_IS_X86_64
     //
@@ -247,7 +247,7 @@ int main(int argn, char ** argv)
     crc32 = jimi::crc32c_hw_u64_v2(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" crc32c_hw_u64()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_IS_X86_64
 
 #endif // __SSE4_2__
@@ -259,7 +259,7 @@ int main(int argn, char ** argv)
     crc32 = folly::crc32c((const uint8_t *)data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" folly::crc32c()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
     printf("\n");
 
@@ -272,7 +272,7 @@ int main(int argn, char ** argv)
     crc32 = jimi::crc32c_hw_x86(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" crc32c_hw_x86()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
 #if CRC32_IS_X86_64
     //
@@ -282,7 +282,7 @@ int main(int argn, char ** argv)
     crc32 = jimi::crc32c_hw_x64(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" crc32c_hw_x64()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, duration, (kNumBytes / (1024 * 1024)) / duration);
+           crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 #endif // CRC32_IS_X86_64
 
 #endif // __SSE4_2__
