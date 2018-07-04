@@ -41,7 +41,12 @@
 #endif
 
 /// one gigabyte
+#ifdef NDEBUG
 static const size_t kNumBytes = 1024 * 1024 * 1024;
+#else
+static const size_t kNumBytes = 128 * 1024 * 1024;
+#endif
+
 /// 4k chunks during last test
 static const size_t kDefaultChunkSize = 4 * 1024;
 
