@@ -38,6 +38,7 @@ static uint32_t crc32c_hw_x86(const char * data, size_t length)
 
     static const ssize_t kStepLen = sizeof(uint32_t);
     static const uint32_t kMaskOne = 0xFFFFFFFFUL;
+    const char * data_end = data + length;
 
     uint32_t crc32 = ~0;
     ssize_t remain = length;
@@ -51,7 +52,6 @@ static uint32_t crc32c_hw_x86(const char * data, size_t length)
             remain -= kStepLen;
         }
         else {
-            const char * data_end = data + length;
             assert((data_end - data) >= 0 && (data_end - data) < kStepLen);
             assert((data_end - data) == remain);
             assert(remain >= 0);
@@ -78,6 +78,7 @@ static uint32_t crc32c_hw_x64(const char * data, size_t length)
 
     static const ssize_t kStepLen = sizeof(uint64_t);
     static const uint64_t kMaskOne = 0xFFFFFFFFFFFFFFFFULL;
+    const char * data_end = data + length;
 
     uint64_t crc64 = ~0;
     ssize_t remain = length;
@@ -91,7 +92,6 @@ static uint32_t crc32c_hw_x64(const char * data, size_t length)
             remain -= kStepLen;
         }
         else {
-            const char * data_end = data + length;
             assert((data_end - data) >= 0 && (data_end - data) < kStepLen);
             assert((data_end - data) == remain);
             assert(remain >= 0);
