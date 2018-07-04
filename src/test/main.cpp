@@ -75,6 +75,13 @@ int main(int argn, char ** argv)
 
     uint32_t randomNumber = 0x27121978U;
 
+    if (folly::detail::crc32c_hw_supported()) {
+        printf("CpuId: SSE 4.2 is supported.\n\n");
+    }
+    else {
+        printf("CpuId: SSE 4.2 is not supported.\n\n");
+    }
+
     // initialize
     char * data = new char[kNumBytes];
     if (data == nullptr) {

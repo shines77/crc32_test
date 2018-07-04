@@ -25,6 +25,12 @@
 
 namespace folly {
 
+namespace detail {
+
+bool crc32c_hw_supported();
+
+} // namespace detail
+
 /**
  * Compute the CRC-32C checksum of a buffer, using a hardware-accelerated
  * implementation if available or a portable software implementation as

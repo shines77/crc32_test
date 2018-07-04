@@ -246,7 +246,9 @@ FOLLY_GCC_DISABLE_NEW_SHADOW_WARNINGS
 
 // We have compiler support for the newest of the new, but
 // MSVC doesn't tell us that.
+#ifndef __SSE4_2__
 #define __SSE4_2__ 1
+#endif
 
 #endif
 
