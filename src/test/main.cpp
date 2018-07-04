@@ -239,16 +239,16 @@ int main(int argn, char ** argv)
     printf(" crc32c_hw_u32()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
-#if CRC32_IS_X86_64
+#if CRC32C_IS_X86_64
     //
-    // jimi::crc32c_hw_u64_v2()
+    // jimi::crc32c_hw_u64()
     //
     startTime = clock_seconds();
-    crc32 = jimi::crc32c_hw_u64_v2(data, kNumBytes);
+    crc32 = jimi::crc32c_hw_u64(data, kNumBytes);
     duration = clock_seconds() - startTime;
     printf(" crc32c_hw_u64()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
-#endif // CRC32_IS_X86_64
+#endif // CRC32C_IS_X86_64
 
 #endif // __SSE4_2__
 
@@ -274,7 +274,7 @@ int main(int argn, char ** argv)
     printf(" crc32c_hw_x86()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
 
-#if CRC32_IS_X86_64
+#if CRC32C_IS_X86_64
     //
     // jimi::crc32c_hw_x64()
     //
@@ -283,7 +283,7 @@ int main(int argn, char ** argv)
     duration = clock_seconds() - startTime;
     printf(" crc32c_hw_x64()   : CRC32 = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, duration, ((double)kNumBytes / (1024 * 1024)) / duration);
-#endif // CRC32_IS_X86_64
+#endif // CRC32C_IS_X86_64
 
 #endif // __SSE4_2__
 
