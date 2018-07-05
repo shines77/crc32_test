@@ -47,12 +47,12 @@ static const size_t kTotalBytes = 1024 * 1024 * 1024;
 static const size_t kTotalBytes = 128 * 1024 * 1024;
 #endif
 
-static const size_t kStepBytes = 1 * 1024 * 1024;
+static const size_t kStepBytes = 512 * 1024;
 
 /// 4k chunks during last test
 static const size_t kDefaultChunkSize = 4 * 1024;
 
-// //////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
 // test code
 //////////////////////////////////////////////////////////
 
@@ -90,13 +90,14 @@ int main(int argn, char ** argv)
     }
 
     // initialize
-    char * data = new char[kStepBytes + 4096];
+    static const size_t kAdditionalBytes = (kTotalBytes / kStepBytes) + 1;
+    char * data = new char[kStepBytes + kAdditionalBytes];
     if (data == nullptr) {
         printf("Error: Out of memory ...\n\n");
         return 0;
     }
 
-    for (size_t i = 0; i < (kStepBytes + 4096); i++) {
+    for (size_t i = 0; i < (kStepBytes + kAdditionalBytes); i++) {
         data[i] = char(randomNumber & 0xFF);
         // simple LCG, see http://en.wikipedia.org/wiki/Linear_congruential_generator
         randomNumber = 1664525 * randomNumber + 1013904223;
