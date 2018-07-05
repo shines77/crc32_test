@@ -47,7 +47,7 @@ static const size_t kTotalBytes = 1024 * 1024 * 1024;
 static const size_t kTotalBytes = 128 * 1024 * 1024;
 #endif
 
-static const size_t kStepBytes = 4 * 1024 * 1024;
+static const size_t kStepBytes = 1 * 1024 * 1024;
 
 /// 4k chunks during last test
 static const size_t kDefaultChunkSize = 4 * 1024;
