@@ -344,7 +344,7 @@ static inline uint64_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, 
     const __m128i crc1_xmm = _mm_cvtsi32_si128((int32_t)crc1);
     const __m128i result1  = _mm_clmulepi64_si128(crc1_xmm, multiplier, 0x10);
     const __m128i result   = _mm_xor_si128(result0, result1);
-    const __m128i __next2  = _mm_cvtsi64_si128((int64_t)(*((uint64_t *)next2 - 1)));
+    const __m128i __next2  = _mm_loadu_si128(reinterpret_cast<const __m128i *>((uint64_t *)next2 - 2));
     const __m128i result64 = _mm_xor_si128(result, __next2);
     uint32_t crc0_low  = _mm_cvtsi128_si32(result64);
     uint32_t crc32     = _mm_crc32_u32(crc2, crc0_low);
@@ -441,11 +441,11 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
         uint64_t crc2 = 0;
 
         size_t block_size;
-        ssize_t loops = (ssize_t)(length / kLoopSize);
+        size_t loops = length / kLoopSize;
         length = length % kLoopSize;
         
         while (likely(loops > 0)) {
-            block_size = ((size_t)loops >= kMaxBlockSize) ? kMaxBlockSize : (size_t)loops;
+            block_size = (likely(loops >= kMaxBlockSize)) ? kMaxBlockSize : loops;
 
             uint64_t * next0 = src;
             uint64_t * next1 = src + 1 * block_size;
@@ -454,22 +454,22 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
             size_t loop = block_size / 2;
             while (likely(loop > 0)) {
                 crc0 = _mm_crc32_u64(crc0, *next0);
-                ++next0;
                 crc1 = _mm_crc32_u64(crc1, *next1);
-                ++next1;
                 crc2 = _mm_crc32_u64(crc2, *next2);
+                ++next0;
+                ++next1;
                 ++next2;
                 crc0 = _mm_crc32_u64(crc0, *next0);
-                ++next0;
                 crc1 = _mm_crc32_u64(crc1, *next1);
-                ++next1;
                 crc2 = _mm_crc32_u64(crc2, *next2);
+                ++next0;
+                ++next1;
                 ++next2;
                 --loop;
             }
 #else
             size_t loop = block_size;
-            do {
+            while (likely(loop > 0)) {
                 crc0 = _mm_crc32_u64(crc0, *next0);
                 crc1 = _mm_crc32_u64(crc1, *next1);
                 crc2 = _mm_crc32_u64(crc2, *next2);
@@ -477,7 +477,7 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
                 ++next1;
                 ++next2;
                 --loop;
-            } while (likely(loop > 0));
+            }
 #endif
             crc0 = crc32c_combine_crc_u64(block_size, crc0, crc1, crc2, next2);
             crc1 = crc2 = 0;
