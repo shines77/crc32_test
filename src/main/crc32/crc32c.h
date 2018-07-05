@@ -339,12 +339,12 @@ static uint32_t crc32c_hw_u64(const char * data, size_t length)
 static inline uint64_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, uint32_t crc1, uint32_t crc2, const uint64_t * next2) {
     assert(block_size > 0 && block_size <= (sizeof(crc32c_clmul_constants) / 2));
     const __m128i multiplier = _mm_load_si128(reinterpret_cast<const __m128i *>(crc32c_clmul_constants) + block_size - 1);
-    const __m128i crc0_xmm = _mm_set_epi32(0, 0, 0, crc0);
+    const __m128i crc0_xmm = _mm_cvtsi32_si128((int32_t)crc0);
     const __m128i result0  = _mm_clmulepi64_si128(crc0_xmm, multiplier, 0x00);
-    const __m128i crc1_xmm = _mm_set_epi32(0, 0, 0, crc1);
+    const __m128i crc1_xmm = _mm_cvtsi32_si128((int32_t)crc1);
     const __m128i result1  = _mm_clmulepi64_si128(crc1_xmm, multiplier, 0x10);
     const __m128i result   = _mm_xor_si128(result0, result1);
-    const __m128i __next2  = _mm_loadu_si128(reinterpret_cast<const __m128i *>((uint64_t *)next2 - 1));
+    const __m128i __next2  = _mm_cvtsi64_si128((int64_t)(*((uint64_t *)next2 - 1)));
     const __m128i result64 = _mm_xor_si128(result, __next2);
     uint32_t crc0_low  = _mm_cvtsi128_si32(result64);
     uint32_t crc32     = _mm_crc32_u32(crc2, crc0_low);
@@ -362,12 +362,12 @@ static inline uint64_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, 
 static inline uint64_t crc32c_combine_crc_u64(size_t block_size, uint64_t crc0, uint64_t crc1, uint64_t crc2, const uint64_t * next2) {
     assert(block_size > 0 && block_size <= (sizeof(crc32c_clmul_constants) / 2));
     const __m128i multiplier = _mm_load_si128(reinterpret_cast<const __m128i *>(crc32c_clmul_constants) + block_size - 1);
-    const __m128i crc0_xmm = _mm_set_epi64x(0, crc0);
+    const __m128i crc0_xmm = _mm_cvtsi64_si128((int64_t)crc0);
     const __m128i result0  = _mm_clmulepi64_si128(crc0_xmm, multiplier, 0x00);
-    const __m128i crc1_xmm = _mm_set_epi64x(0, crc1);
+    const __m128i crc1_xmm = _mm_cvtsi64_si128((int64_t)crc1);
     const __m128i result1  = _mm_clmulepi64_si128(crc1_xmm, multiplier, 0x10);
     const __m128i result   = _mm_xor_si128(result0, result1);
-    crc0 = _mm_cvtsi128_si64(result);
+    crc0 = (uint64_t)_mm_cvtsi128_si64(result);
     crc0 = crc0 ^ *((uint64_t *)next2 - 1);
     uint64_t crc32 = _mm_crc32_u64(crc2, crc0);
     return crc32;

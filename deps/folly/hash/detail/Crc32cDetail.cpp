@@ -72,7 +72,7 @@ namespace crc32_detail {
 
 // Numbers taken directly from intel whitepaper.
 // clang-format off
-const uint64_t clmul_constants[] = {
+alignas(16) const uint64_t clmul_constants[] = {
     0x14cd00bd6, 0x105ec76f0, 0x0ba4fc28e, 0x14cd00bd6,
     0x1d82c63da, 0x0f20c0dfe, 0x09e4addf8, 0x0ba4fc28e,
     0x039d3b296, 0x1384aa63a, 0x102f9b8a2, 0x1d82c63da,
