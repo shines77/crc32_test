@@ -378,7 +378,7 @@ static uint64_t crc32c_combine_crc_u64(size_t block_size, uint64_t crc0, uint64_
 static inline uint32_t __crc32c_hw_u32(const char * data, size_t length, uint32_t crc_init)
 {
     assert(data != nullptr);
-    uint32_t crc32 = ~0;
+    uint32_t crc32 = ~crc_init;
 
     static const size_t kStepSize = sizeof(uint32_t);
     uint32_t * src = (uint32_t *)data;
