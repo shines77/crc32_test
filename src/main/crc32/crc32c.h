@@ -413,19 +413,21 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
     unsigned char * src8 = (unsigned char *)data;
     size_t data_len = length;
 
-    size_t unaligned = ((size_t)src8 & (kAlignment - 1));
-    length -= unaligned;
-    if (unaligned & 0x04U) {
-        crc32 = _mm_crc32_u32(crc32, *(uint32_t *)src8);
-        src8 += sizeof(uint32_t);
-    }
-    if (unaligned & 0x02U) {
-        crc32 = _mm_crc32_u16(crc32, *(uint16_t *)src8);
-        src8 += sizeof(uint16_t);
-    }
-    if (unaligned & 0x01U) {
-        crc32 = _mm_crc32_u8(crc32, *(uint8_t *)src8);
-        src8 += sizeof(uint8_t);
+    size_t unaligned = ((kAlignment - (size_t)src8) & (kAlignment - 1));
+    if (unlikely(unaligned != 0)) {
+        length -= unaligned;
+        if (unaligned & 0x04U) {
+            crc32 = _mm_crc32_u32(crc32, *(uint32_t *)src8);
+            src8 += sizeof(uint32_t);
+        }
+        if (unaligned & 0x02U) {
+            crc32 = _mm_crc32_u16(crc32, *(uint16_t *)src8);
+            src8 += sizeof(uint16_t);
+        }
+        if (unaligned & 0x01U) {
+            crc32 = _mm_crc32_u8(crc32, *(uint8_t *)src8);
+            src8 += sizeof(uint8_t);
+        }
     }
 
     uint64_t crc64;
@@ -442,7 +444,7 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
         ssize_t loops = (ssize_t)(length / kLoopSize);
         length = length % kLoopSize;
         
-        while (loops > 0) {
+        while (likely(loops > 0)) {
             block_size = ((size_t)loops >= kMaxBlockSize) ? kMaxBlockSize : (size_t)loops;
 
             uint64_t * next0 = src;
@@ -459,13 +461,14 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
                 ++next1;
                 ++next2;
                 --loop;
-            } while (loop > 0);
+            } while (likely(loop > 0));
 
             crc0 = crc32c_combine_crc_u64(block_size, crc0, crc1, crc2, next2);
             crc1 = crc2 = 0;
 
             src = next2;
             loops -= block_size;
+            //length -= (kLoopSize * block_size);
         }
 
         crc64 = crc0;
@@ -491,18 +494,20 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
     assert(src8 <= src8_end);
 
     size_t remain = (size_t)(src8_end - src8);
-    assert(remain >= 0 && remain <= kStepSize);
-    if (remain & 0x04U) {
-        crc32 = _mm_crc32_u32(crc32, *(uint32_t *)src8);
-        src8 += sizeof(uint32_t);
-    }
-    if (remain & 0x02U) {
-        crc32 = _mm_crc32_u16(crc32, *(uint16_t *)src8);
-        src8 += sizeof(uint16_t);
-    }
-    if (remain & 0x01U) {
-        crc32 = _mm_crc32_u8(crc32, *(uint8_t *)src8);
-        src8 += sizeof(uint32_t);
+    assert(remain >= 0 && remain < kStepSize);
+    if (likely(remain != 0)) {
+        if (remain & 0x04U) {
+            crc32 = _mm_crc32_u32(crc32, *(uint32_t *)src8);
+            src8 += sizeof(uint32_t);
+        }
+        if (remain & 0x02U) {
+            crc32 = _mm_crc32_u16(crc32, *(uint16_t *)src8);
+            src8 += sizeof(uint16_t);
+        }
+        if (remain & 0x01U) {
+            crc32 = _mm_crc32_u8(crc32, *(uint8_t *)src8);
+            src8 += sizeof(uint32_t);
+        }
     }
     assert(src8 == src8_end);
     return ~crc32;
