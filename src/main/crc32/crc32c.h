@@ -336,8 +336,8 @@ static uint32_t crc32c_hw_u64(const char * data, size_t length)
 
 #endif // CRC32C_IS_X86_64
 
-static uint64_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, uint32_t crc1, uint32_t crc2, const uint64_t * next2) {
-    assert(block_size > 0 && block_size <= sizeof(crc32c_clmul_constants));
+static inline uint64_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, uint32_t crc1, uint32_t crc2, const uint64_t * next2) {
+    assert(block_size > 0 && block_size <= (sizeof(crc32c_clmul_constants) / 2));
     const __m128i multiplier = _mm_load_si128(reinterpret_cast<const __m128i *>(crc32c_clmul_constants) + block_size - 1);
     const __m128i crc0_xmm = _mm_set_epi32(0, 0, 0, crc0);
     const __m128i result0  = _mm_clmulepi64_si128(crc0_xmm, multiplier, 0x00);
@@ -359,8 +359,8 @@ static uint64_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, uint32_
  * crc32c_combine_crc() performs pclmulqdq multiplication of 2 partial CRC's and a well
  * chosen constant and xor's these with the remaining CRC.
  */
-static uint64_t crc32c_combine_crc_u64(size_t block_size, uint64_t crc0, uint64_t crc1, uint64_t crc2, const uint64_t * next2) {
-    assert(block_size > 0 && block_size <= sizeof(crc32c_clmul_constants));
+static inline uint64_t crc32c_combine_crc_u64(size_t block_size, uint64_t crc0, uint64_t crc1, uint64_t crc2, const uint64_t * next2) {
+    assert(block_size > 0 && block_size <= (sizeof(crc32c_clmul_constants) / 2));
     const __m128i multiplier = _mm_load_si128(reinterpret_cast<const __m128i *>(crc32c_clmul_constants) + block_size - 1);
     const __m128i crc0_xmm = _mm_set_epi64x(0, crc0);
     const __m128i result0  = _mm_clmulepi64_si128(crc0_xmm, multiplier, 0x00);
@@ -414,17 +414,17 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
     size_t data_len = length;
 
     size_t unaligned = ((kAlignment - (size_t)src8) & (kAlignment - 1));
-    if (unlikely(unaligned != 0)) {
+    if (likely(unaligned != 0)) {
         length -= unaligned;
-        if (unaligned & 0x04U) {
+        if (likely(unaligned & 0x04U)) {
             crc32 = _mm_crc32_u32(crc32, *(uint32_t *)src8);
             src8 += sizeof(uint32_t);
         }
-        if (unaligned & 0x02U) {
+        if (likely(unaligned & 0x02U)) {
             crc32 = _mm_crc32_u16(crc32, *(uint16_t *)src8);
             src8 += sizeof(uint16_t);
         }
-        if (unaligned & 0x01U) {
+        if (likely(unaligned & 0x01U)) {
             crc32 = _mm_crc32_u8(crc32, *(uint8_t *)src8);
             src8 += sizeof(uint8_t);
         }
@@ -496,15 +496,15 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
     size_t remain = (size_t)(src8_end - src8);
     assert(remain >= 0 && remain < kStepSize);
     if (likely(remain != 0)) {
-        if (remain & 0x04U) {
+        if (likely(remain & 0x04U)) {
             crc32 = _mm_crc32_u32(crc32, *(uint32_t *)src8);
             src8 += sizeof(uint32_t);
         }
-        if (remain & 0x02U) {
+        if (likely(remain & 0x02U)) {
             crc32 = _mm_crc32_u16(crc32, *(uint16_t *)src8);
             src8 += sizeof(uint16_t);
         }
-        if (remain & 0x01U) {
+        if (likely(remain & 0x01U)) {
             crc32 = _mm_crc32_u8(crc32, *(uint8_t *)src8);
             src8 += sizeof(uint32_t);
         }
