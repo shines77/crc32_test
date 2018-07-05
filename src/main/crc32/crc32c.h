@@ -461,9 +461,9 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
                 ++next0;
                 ++next1;
                 ++next2;
-                --loop;
                 crc0 = _mm_crc32_u64(crc0, *next0);
                 crc1 = _mm_crc32_u64(crc1, *next1);
+                --loop;
                 if (likely(loop > 0))
                     crc2 = _mm_crc32_u64(crc2, *next2);
                 ++next0;
