@@ -434,8 +434,8 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
     uint64_t crc64;
     uint64_t * src = (uint64_t *)src8;
 
-    if (likely(length >= kLoopSize * 4)) {
-        static const size_t kMaxBlockSize = 128;
+    if (likely(length >= kLoopSize * 2)) {
+        static const size_t kMaxBlockSize = 127;
 
         uint64_t crc0 = (uint64_t)crc32;
         uint64_t crc1 = 0;
@@ -499,7 +499,7 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
         crc64 = crc0;
     }
     else {
-        // Convent crc32 to 64 bit integer.
+        // Extend crc32 to 64 bit integer.
         crc64 = (uint64_t)crc32;
     }
 
