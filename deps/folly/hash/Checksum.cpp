@@ -44,7 +44,7 @@ crc32_hw(const uint8_t* data, size_t nbytes, uint32_t startingChecksum) {
 
   // Process unaligned bytes
   if ((uintptr_t)data & 15) {
-    size_t limit = std::min(nbytes, -(uintptr_t)data & 15);
+    size_t limit = (std::min)(nbytes, -(uintptr_t)data & 15);
     sum = crc32_sw(data, limit, sum);
     offset += limit;
     nbytes -= limit;

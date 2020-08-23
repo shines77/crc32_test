@@ -632,6 +632,18 @@ int main(int argn, char ** argv)
     benchmark_jimi_crc32c_hw_u64(data, kTotalBytes);
 
     //
+    // jimi::crc32c_hw_one_loop_x86()
+    //
+    benchmark_jimi_crc32c_hw_one_loop_x86(data, kTotalBytes);
+
+    //
+    // jimi::crc32c_hw_one_loop_x64()
+    //
+    benchmark_jimi_crc32c_hw_one_loop_x64(data, kTotalBytes);
+
+    printf("\n");
+
+    //
     // jimi::crc32c_hw_triplet_loop()
     //
     benchmark_jimi_crc32c_hw_triplet_loop(data, kTotalBytes);
@@ -642,22 +654,6 @@ int main(int argn, char ** argv)
     // folly::crc32c()
     //
     benchmark_folly_crc32c(data, kTotalBytes);
-
-    printf("\n");
-
-#if __SSE4_2__
-
-    //
-    // jimi::crc32c_hw_one_loop_x86()
-    //
-    benchmark_jimi_crc32c_hw_one_loop_x86(data, kTotalBytes);
-
-    //
-    // jimi::crc32c_hw_one_loop_x64()
-    //
-    benchmark_jimi_crc32c_hw_one_loop_x64(data, kTotalBytes);
-
-#endif // __SSE4_2__
 
     printf("\n");
 
