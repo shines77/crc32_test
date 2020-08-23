@@ -40,28 +40,28 @@ A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` an
 *  `gcc 5.4.0`
 
 ```bash
- bitwise                  : CRC32 = 0x0E225381, SUM = 0xFAB9C5C6, 0.802 sec(s), 79.765 MB/s
- half-byte                : CRC32 = 0x08F105AF, SUM = 0xCAC04360, 0.734 sec(s), 174.290 MB/s
- tableless (byte)         : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.444 sec(s), 177.280 MB/s
- tableless2 (byte)        : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.438 sec(s), 178.010 MB/s
-  1 byte  at once         : CRC32 = 0x08F105AF, SUM = 0x2B010D80, 1.435 sec(s), 356.725 MB/s
-  4 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 1.062 sec(s), 964.429 MB/s
-  8 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.676 sec(s), 1513.887 MB/s
- 4x8 bytes at once        : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.505 sec(s), 2026.246 MB/s
- 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.331 sec(s), 3089.951 MB/s
- 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.332 sec(s), 3081.710 MB/s
-    chunked               : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.330 sec(s), 3098.610 MB/s
+ bitwise                  : CRC32 = 0x0E225381, SUM = 0xFAB9C5C6, 0.813 sec(s), 78.714 MB/s
+ half-byte                : CRC32 = 0x08F105AF, SUM = 0xCAC04360, 0.733 sec(s), 174.718 MB/s
+ tableless (byte)         : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.485 sec(s), 172.349 MB/s
+ tableless2 (byte)        : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.448 sec(s), 176.798 MB/s
+  1 byte  at once         : CRC32 = 0x08F105AF, SUM = 0x2B010D80, 1.427 sec(s), 358.696 MB/s
+  4 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 1.104 sec(s), 927.372 MB/s
+  8 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.668 sec(s), 1533.519 MB/s
+ 4x8 bytes at once        : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.497 sec(s), 2060.132 MB/s
+ 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.326 sec(s), 3145.362 MB/s
+ 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.324 sec(s), 3164.976 MB/s (including prefetching)
+    chunked               : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.326 sec(s), 3141.470 MB/s
 
- folly::crc32()           : CRC32 = 0xDF220648, SUM = 0xDD955680, 0.092 sec(s), 11180.472 MB/s
+ folly::crc32()           : CRC32 = 0xDF220648, SUM = 0xDD955680, 0.090 sec(s), 11372.426 MB/s
 
- crc32c_hw_u32()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.274 sec(s), 3733.894 MB/s
- crc32c_hw_u64()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.138 sec(s), 7397.871 MB/s
- crc32c_hw_one_loop_x86() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.273 sec(s), 3755.008 MB/s
- crc32c_hw_one_loop_x64() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.137 sec(s), 7461.320 MB/s
+ crc32c_hw_u32()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.268 sec(s), 3826.681 MB/s
+ crc32c_hw_u64()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.135 sec(s), 7572.361 MB/s
+ crc32c_hw_one_loop_x86() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.268 sec(s), 3826.258 MB/s
+ crc32c_hw_one_loop_x64() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.135 sec(s), 7573.376 MB/s
 
- crc32c_hw_triplet_loop() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.052 sec(s), 19564.910 MB/s
- folly::crc32c()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.054 sec(s), 18926.481 MB/s
-```
+ crc32c_hw_triplet_loop() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.050 sec(s), 20385.342 MB/s
+ folly::crc32c()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.053 sec(s), 19143.281 MB/s
+ ```
 
 2. Windows 10 (AMD Ryzen 1700X)
 
