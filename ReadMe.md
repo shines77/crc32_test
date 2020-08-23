@@ -33,9 +33,9 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 
 ## Benchmark (性能测试)
 
-1. Windows
+1. Windows 10 (AMD Ryzen 1700X)
 
-* `Windows 10 Professional Build 1709` - 64 bit
+* `Windows 10 Professional Build 1809` - 64 bit
 * `AMD Ryzen 1700X` @ `3.40GHz`, Boost on `3.8GHz` (Support `SSE 4.2`)
 * `Vc 2015 update 3`
 
@@ -49,7 +49,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
   8 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.605 sec(s), 1692.147 MB/s
  4x8 bytes at once        : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.611 sec(s), 1675.682 MB/s
  16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.459 sec(s), 2230.457 MB/s
- 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.458 sec(s), 2237.239 MB/s (including prefetching)
+ 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.458 sec(s), 2237.239 MB/s
     chunked               : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.460 sec(s), 2224.228 MB/s
 
  folly::crc32()           : CRC32 = 0xDF220648, SUM = 0xDD955680, 0.083 sec(s), 12401.629 MB/s
@@ -63,30 +63,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  folly::crc32c()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.132 sec(s), 7760.427 MB/s
 ```
 
-```bash
- bitwise           : CRC32 = 0x221F390F, 10.846 sec(s), 94.411 MB/s
- half-byte         : CRC32 = 0x221F390F, 5.145 sec(s), 199.027 MB/s
- tableless (byte)  : CRC32 = 0x221F390F, 4.861 sec(s), 210.662 MB/s
- tableless (byte2) : CRC32 = 0x221F390F, 4.177 sec(s), 245.139 MB/s
-  1 byte  at once  : CRC32 = 0x221F390F, 2.481 sec(s), 412.691 MB/s
-  4 bytes at once  : CRC32 = 0x221F390F, 0.918 sec(s), 1115.472 MB/s
-  8 bytes at once  : CRC32 = 0x221F390F, 0.615 sec(s), 1664.642 MB/s
- 4x8 bytes at once : CRC32 = 0x221F390F, 0.608 sec(s), 1685.355 MB/s
- 16 bytes at once  : CRC32 = 0x221F390F, 0.457 sec(s), 2241.662 MB/s
- 16 bytes at once  : CRC32 = 0x221F390F, 0.465 sec(s), 2203.015 MB/s (including prefetching)
-    chunked        : CRC32 = 0x221F390F, 0.463 sec(s), 2211.929 MB/s
-
- folly::crc32()    : CRC32 = 0x221F390F, 0.096 sec(s), 10611.453 MB/s
-
- crc32c_hw_u32()   : CRC32 = 0xB85FB04A, 0.325 sec(s), 3153.989 MB/s
- crc32c_hw_u64()   : CRC32 = 0xB85FB04A, 0.175 sec(s), 5865.083 MB/s
- folly::crc32c()   : CRC32 = 0xB85FB04A, 0.198 sec(s), 5182.397 MB/s
-
- crc32c_hw_x86()   : CRC32 = 0x193A2B0B, 0.316 sec(s), 3238.855 MB/s
- crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.170 sec(s), 6017.945 MB/s
-```
-
-1. Windows
+2. Windows 10 (Intel i5-4210M)
 
 * `Windows 10 Professional Build 1803` - 64 bit
 * `Intel i5-4210M` @ `2.60GHz`, Boost on `3.2GHz` (Support `SSE 4.2`)
@@ -102,7 +79,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
   8 bytes at once  : CRC32 = 0x221F390F, 0.766 sec(s), 1336.391 MB/s
  4x8 bytes at once : CRC32 = 0x221F390F, 0.743 sec(s), 1378.817 MB/s
  16 bytes at once  : CRC32 = 0x221F390F, 0.575 sec(s), 1780.454 MB/s
- 16 bytes at once  : CRC32 = 0x221F390F, 0.585 sec(s), 1751.354 MB/s (including prefetching)
+ 16 bytes at once  : CRC32 = 0x221F390F, 0.585 sec(s), 1751.354 MB/s
     chunked        : CRC32 = 0x221F390F, 0.584 sec(s), 1754.880 MB/s
 
  folly::crc32()    : CRC32 = 0x221F390F, 0.125 sec(s), 8182.784 MB/s
@@ -116,33 +93,6 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 ```
 
 3. Linux
-
-* `Ubuntu 14.04 Server` - 64 bit
-* `Dual Intel Xeon E5-2683 v3` @ `2.00GHz`, Boost on `3.0GHz` (Support `SSE 4.2`)
-*  `g++ 5.5.0`
-
-```bash
- bitwise           : CRC32 = 0x221F390F, 15.335 sec(s), 66.776 MB/s
- half-byte         : CRC32 = 0x221F390F, 8.173 sec(s), 125.295 MB/s
- tableless (byte)  : CRC32 = 0x221F390F, 6.821 sec(s), 150.125 MB/s
- tableless (byte2) : CRC32 = 0x221F390F, 7.567 sec(s), 135.328 MB/s
-  1 byte  at once  : CRC32 = 0x221F390F, 3.647 sec(s), 280.776 MB/s
-  4 bytes at once  : CRC32 = 0x221F390F, 1.501 sec(s), 682.185 MB/s
-  8 bytes at once  : CRC32 = 0x221F390F, 0.962 sec(s), 1064.351 MB/s
- 4x8 bytes at once : CRC32 = 0x221F390F, 0.661 sec(s), 1548.828 MB/s
- 16 bytes at once  : CRC32 = 0x221F390F, 0.471 sec(s), 2173.914 MB/s
- 16 bytes at once  : CRC32 = 0x221F390F, 0.510 sec(s), 2006.052 MB/s (including prefetching)
-    chunked        : CRC32 = 0x221F390F, 0.434 sec(s), 2358.953 MB/s
-
- folly::crc32()    : CRC32 = 0x221F390F, 0.196 sec(s), 5212.813 MB/s
-
- crc32c_hw_u32()   : CRC32 = 0xB85FB04A, 0.365 sec(s), 2809.149 MB/s
- crc32c_hw_u64()   : CRC32 = 0xB85FB04A, 0.205 sec(s), 5005.212 MB/s
- folly::crc32c()   : CRC32 = 0xB85FB04A, 0.184 sec(s), 5568.926 MB/s
-
- crc32c_hw_x86()   : CRC32 = 0x193A2B0B, 0.368 sec(s), 2779.222 MB/s
- crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.214 sec(s), 4781.217 MB/s
-```
 
 * `Ubuntu 16.04 Server` - 64 bit
 * `Intel(R) Xeon(R) CPU E5-2690 v3` @ `2.60GHz`, (Support `SSE 4.2`)
@@ -158,7 +108,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
   8 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.676 sec(s), 1513.887 MB/s
  4x8 bytes at once        : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.505 sec(s), 2026.246 MB/s
  16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.331 sec(s), 3089.951 MB/s
- 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.332 sec(s), 3081.710 MB/s (including prefetching)
+ 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.332 sec(s), 3081.710 MB/s
     chunked               : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.330 sec(s), 3098.610 MB/s
 
  folly::crc32()           : CRC32 = 0xDF220648, SUM = 0xDD955680, 0.092 sec(s), 11180.472 MB/s
@@ -170,6 +120,35 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 
  crc32c_hw_triplet_loop() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.052 sec(s), 19564.910 MB/s
  folly::crc32c()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.054 sec(s), 18926.481 MB/s
+```
+
+* `Ubuntu 14.04 Server` - 64 bit
+* `Dual Intel Xeon E5-2683 v3` @ `2.00GHz`, Boost on `3.0GHz` (Support `SSE 4.2`)
+*  `g++ 5.5.0`
+
+较早以前的测试数据：
+
+```bash
+ bitwise           : CRC32 = 0x221F390F, 15.335 sec(s), 66.776 MB/s
+ half-byte         : CRC32 = 0x221F390F, 8.173 sec(s), 125.295 MB/s
+ tableless (byte)  : CRC32 = 0x221F390F, 6.821 sec(s), 150.125 MB/s
+ tableless (byte2) : CRC32 = 0x221F390F, 7.567 sec(s), 135.328 MB/s
+  1 byte  at once  : CRC32 = 0x221F390F, 3.647 sec(s), 280.776 MB/s
+  4 bytes at once  : CRC32 = 0x221F390F, 1.501 sec(s), 682.185 MB/s
+  8 bytes at once  : CRC32 = 0x221F390F, 0.962 sec(s), 1064.351 MB/s
+ 4x8 bytes at once : CRC32 = 0x221F390F, 0.661 sec(s), 1548.828 MB/s
+ 16 bytes at once  : CRC32 = 0x221F390F, 0.471 sec(s), 2173.914 MB/s
+ 16 bytes at once  : CRC32 = 0x221F390F, 0.510 sec(s), 2006.052 MB/s
+    chunked        : CRC32 = 0x221F390F, 0.434 sec(s), 2358.953 MB/s
+
+ folly::crc32()    : CRC32 = 0x221F390F, 0.196 sec(s), 5212.813 MB/s
+
+ crc32c_hw_u32()   : CRC32 = 0xB85FB04A, 0.365 sec(s), 2809.149 MB/s
+ crc32c_hw_u64()   : CRC32 = 0xB85FB04A, 0.205 sec(s), 5005.212 MB/s
+ folly::crc32c()   : CRC32 = 0xB85FB04A, 0.184 sec(s), 5568.926 MB/s
+
+ crc32c_hw_x86()   : CRC32 = 0x193A2B0B, 0.368 sec(s), 2779.222 MB/s
+ crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.214 sec(s), 4781.217 MB/s
 ```
 
 ## Contributors (贡献者)
