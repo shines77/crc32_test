@@ -317,7 +317,7 @@ void benchmark_crc32_16byte_prefetch(char * data, size_t totalBytes)
     duration = clock_seconds() - startTime;
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" 16 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s (including prefetching)\n",
+    printf(" 16 bytes at once (*)     : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif
 }
@@ -578,12 +578,12 @@ int main(int argn, char ** argv)
     //
     // one byte at once
     //
-    benchmark_crc32_1byte(data, kTotalBytes / 2);
+    benchmark_crc32_1byte(data, kTotalBytes / 4);
 
     //
     // four bytes at once
     //
-    benchmark_crc32_4byte(data, kTotalBytes);
+    benchmark_crc32_4byte(data, kTotalBytes / 2);
 
     //
     // eight bytes at once
@@ -603,7 +603,7 @@ int main(int argn, char ** argv)
     //
     // sixteen bytes at once (prefetch)
     //
-    benchmark_crc32_16byte_prefetch(data, kTotalBytes);
+    //benchmark_crc32_16byte_prefetch(data, kTotalBytes);
 
     //
     // process in 4k chunks

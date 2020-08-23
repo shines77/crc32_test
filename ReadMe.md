@@ -49,7 +49,7 @@ A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` an
   8 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.668 sec(s), 1533.519 MB/s
  4x8 bytes at once        : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.497 sec(s), 2060.132 MB/s
  16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.326 sec(s), 3145.362 MB/s
- 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.324 sec(s), 3164.976 MB/s (including prefetching)
+ 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.324 sec(s), 3164.976 MB/s
     chunked               : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.326 sec(s), 3141.470 MB/s
 
  folly::crc32()           : CRC32 = 0xDF220648, SUM = 0xDD955680, 0.090 sec(s), 11372.426 MB/s
