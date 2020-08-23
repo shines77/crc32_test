@@ -20,10 +20,6 @@ A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` an
 
 * `/folly/hash/Checksum.h`
 
-## 参考文章 / Reference Article
-
-`zhihu.com`: [https://www.zhihu.com/question/280252145](https://www.zhihu.com/question/280252145)
-
 ## 依赖库 / Dependent library
 
 `Boost library`:
@@ -31,12 +27,16 @@ A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` an
 * boost.crc
 * boost.preprocessor
 
+## 参考文章 / Reference Article
+
+`zhihu.com`: [https://www.zhihu.com/question/280252145](https://www.zhihu.com/question/280252145)
+
 ## 性能测试 / Benchmark
 
 1. Linux (Intel Xeon E5-2690 v3)
 
-* `Ubuntu 16.04 Server` - 64 bit
-* `Dual Intel Xeon E5-2690 v3` @ `2.60GHz`, (Support `SSE 4.2`)
+* `Ubuntu 16.04 Server - 64 bit`
+* `Dual Intel Xeon E5-2690 v3 @ 2.60GHz`, (Support `SSE 4.2`)
 *  `gcc 5.4.0`
 
 ```bash
@@ -65,8 +65,8 @@ A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` an
 
 2. Windows 10 (AMD Ryzen 1700X)
 
-* `Windows 10 Professional Build 1809` - 64 bit
-* `AMD Ryzen 1700X` @ `3.40GHz`, Boost on `3.8GHz` (Support `SSE 4.2`)
+* `Windows 10 Professional Build 1809 - 64 bit`
+* `AMD Ryzen 1700X @ 3.40GHz`, Boost on `3.8GHz` (Support `SSE 4.2`)
 * `Vc 2015 update 3`
 
 ```bash
@@ -95,8 +95,8 @@ A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` an
 
 3. Windows 10 (Intel i5-4210M)
 
-* `Windows 10 Professional Build 1803` - 64 bit
-* `Intel i5-4210M` @ `2.60GHz`, Boost on `3.2GHz` (Support `SSE 4.2`)
+* `Windows 10 Professional Build 1803 - 64 bit`
+* `Intel i5-4210M @ 2.60GHz`, Boost on `3.2GHz` (Support `SSE 4.2`)
 * `Vc 2015 update 3`
 
 较早以前的测试数据：
@@ -126,8 +126,8 @@ A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` an
 
 4. Linux (Intel Xeon E5-2683 v3)
 
-* `Ubuntu 14.04 Server` - 64 bit
-* `Dual Intel Xeon E5-2683 v3` @ `2.00GHz`, Boost on `3.0GHz` (Support `SSE 4.2`)
+* `Ubuntu 14.04 Server - 64 bit`
+* `Dual Intel Xeon E5-2683 v3 @ 2.00GHz`, Boost on `3.0GHz` (Support `SSE 4.2`)
 *  `g++ 5.5.0`
 
 较早以前的测试数据：
