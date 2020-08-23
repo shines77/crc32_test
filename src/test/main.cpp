@@ -76,6 +76,458 @@ static double clock_seconds()
     __COMPILER_BARRIER();
 }
 
+void benchmark_crc32_bitwise(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_bitwise(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" bitwise                  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+void benchmark_crc32_halfbyte(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_halfbyte(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" half-byte                : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// one byte at once (without lookup tables)
+//
+void benchmark_crc32_1byte_tableless(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_1byte_tableless(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" tableless (byte)         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// one byte at once #2 (without lookup tables)
+//
+void benchmark_crc32_1byte_tableless2(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_1byte_tableless2(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" tableless (byte2)        : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// one byte at once
+//
+void benchmark_crc32_1byte(char * data, size_t totalBytes)
+{
+#ifdef CRC32_USE_LOOKUP_TABLE_BYTE
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_1byte(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf("  1 byte  at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+#endif
+}
+
+//
+// four bytes at once
+//
+void benchmark_crc32_4byte(char * data, size_t totalBytes)
+{
+#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_4bytes(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf("  4 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+#endif
+}
+
+//
+// eight bytes at once
+//
+void benchmark_crc32_8byte(char * data, size_t totalBytes)
+{
+#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_8bytes(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf("  8 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+#endif
+}
+
+//
+// eight bytes at once, unrolled 4 times (=> 32 bytes per loop)
+//
+void benchmark_crc32_4x8byte(char * data, size_t totalBytes)
+{
+#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_4x8bytes(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" 4x8 bytes at once        : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+#endif
+}
+
+//
+// sixteen bytes at once
+//
+void benchmark_crc32_16byte(char * data, size_t totalBytes)
+{
+#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_16bytes(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" 16 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+#endif
+}
+
+//
+// sixteen bytes at once (prefetch)
+//
+void benchmark_crc32_16byte_prefetch(char * data, size_t totalBytes)
+{
+#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = crc32_16bytes_prefetch(data + i, kStepBytes, 0, 256);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" 16 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s (including prefetching)\n",
+           crc32, crc32_sum, duration, throughput);
+#endif
+}
+
+//
+// process in 4k chunks
+//
+void benchmark_crc32_fast(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = 0; // also default parameter of crc32_xx functions
+        size_t bytesProcessed = 0;
+        char * data_start = data + i;
+        while (bytesProcessed < kStepBytes) {
+            size_t bytesLeft = kStepBytes - bytesProcessed;
+            size_t chunkSize = (kDefaultChunkSize < bytesLeft) ? kDefaultChunkSize : bytesLeft;
+
+            crc32 = crc32_fast((const void *)(data_start + bytesProcessed), chunkSize, crc32);
+
+            bytesProcessed += chunkSize;
+        }
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf("    chunked               : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// folly::crc32()
+//
+void benchmark_folly_crc32(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = folly::crc32((const uint8_t *)(data + i), kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" folly::crc32()           : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// jimi::crc32c_hw_u32()
+//
+void benchmark_jimi_crc32c_hw_u32(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jimi::crc32c_hw_u32(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" crc32c_hw_u32()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// jimi::crc32c_hw_u64()
+//
+void benchmark_jimi_crc32c_hw_u64(char * data, size_t totalBytes)
+{
+#if CRC32C_IS_X86_64
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jimi::crc32c_hw_u64(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" crc32c_hw_u64()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+#endif // CRC32C_IS_X86_64
+}
+
+//
+// jimi::crc32c_hw_triplet_loop()
+//
+void benchmark_jimi_crc32c_hw_triplet_loop(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jimi::crc32c_hw_triplet_loop(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" crc32c_hw_triplet_loop() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// folly::crc32c()
+//
+void benchmark_folly_crc32c(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = folly::crc32c((const uint8_t *)(data + i), kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" folly::crc32c()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// jimi::crc32c_hw_one_loop_x86()
+//
+void benchmark_jimi_crc32c_hw_one_loop_x86(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jimi::crc32c_hw_one_loop_x86(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" crc32c_hw_one_loop_x86() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// jimi::crc32c_hw_one_loop_x64()
+//
+void benchmark_jimi_crc32c_hw_one_loop_x64(char * data, size_t totalBytes)
+{
+#if CRC32C_IS_X86_64
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jimi::crc32c_hw_one_loop_x64(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" crc32c_hw_one_loop_x64() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+#endif // CRC32C_IS_X86_64
+}
+
 int main(int argn, char ** argv)
 {
     printf("Please wait ...\n\n");
@@ -103,222 +555,67 @@ int main(int argn, char ** argv)
         randomNumber = 1664525 * randomNumber + 1013904223;
     }
 
-    // re-use variables
-    double startTime, duration;
-    size_t totalBytes, iterations;
-    uint32_t crc32, crc32_sum;
-
     //
     // bitwise
     //
-    totalBytes = kTotalBytes / 16;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_bitwise(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" bitwise           : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
+    benchmark_crc32_bitwise(data, kTotalBytes / 16);
 
     //
     // half-byte
     //
-    totalBytes = kTotalBytes / 8;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_halfbyte(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" half-byte         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
+    benchmark_crc32_halfbyte(data, kTotalBytes / 8);
 
     //
     // one byte at once (without lookup tables)
     //
-    totalBytes = kTotalBytes / 4;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_1byte_tableless(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" tableless (byte)  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
+    benchmark_crc32_1byte_tableless(data, kTotalBytes / 4);
 
     //
-    // one byte at once (without lookup tables)
+    // one byte at once #2 (without lookup tables)
     //
-    totalBytes = kTotalBytes / 2;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
+    benchmark_crc32_1byte_tableless2(data, kTotalBytes / 2);
 
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_1byte_tableless2(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" tableless (byte2) : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-
-#ifdef CRC32_USE_LOOKUP_TABLE_BYTE
     //
     // one byte at once
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
+    benchmark_crc32_1byte(data, kTotalBytes);
 
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_1byte(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf("  1 byte  at once  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-#endif
-
-#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
     //
     // four bytes at once
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
+    benchmark_crc32_4byte(data, kTotalBytes);
 
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_4bytes(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf("  4 bytes at once  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-#endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
-
-#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
     //
     // eight bytes at once
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_8bytes(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf("  8 bytes at once  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
+    benchmark_crc32_8byte(data, kTotalBytes);
 
     //
     // eight bytes at once, unrolled 4 times (=> 32 bytes per loop)
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_4x8bytes(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" 4x8 bytes at once : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-#endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
-
-#ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
-    //
-    // sixteen bytes at once
-    //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_16bytes(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" 16 bytes at once  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)kTotalBytes / (1024 * 1024)) / duration);
+    benchmark_crc32_4x8byte(data, kTotalBytes);
 
     //
     // sixteen bytes at once
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
+    benchmark_crc32_16byte(data, kTotalBytes);
 
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = crc32_16bytes_prefetch(data + i, kStepBytes, 0, 256);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" 16 bytes at once  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s (including prefetching)\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-#endif // CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
+    //
+    // sixteen bytes at once (prefetch)
+    //
+    benchmark_crc32_16byte_prefetch(data, kTotalBytes);
 
     //
     // process in 4k chunks
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = 0; // also default parameter of crc32_xx functions
-        size_t bytesProcessed = 0;
-        char * data_start = data + i;
-        while (bytesProcessed < kStepBytes) {
-            size_t bytesLeft = kStepBytes - bytesProcessed;
-            size_t chunkSize = (kDefaultChunkSize < bytesLeft) ? kDefaultChunkSize : bytesLeft;
-
-            crc32 = crc32_fast((const void *)(data_start + bytesProcessed), chunkSize, crc32);
-
-            bytesProcessed += chunkSize;
-        }
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf("    chunked        : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
+    benchmark_crc32_fast(data, kTotalBytes);
 
     printf("\n");
 
     //
     // folly::crc32()
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = folly::crc32((const uint8_t *)(data + i), kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" folly::crc32()    : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
+    benchmark_folly_crc32(data, kTotalBytes);
 
     printf("\n");
 
@@ -327,110 +624,38 @@ int main(int argn, char ** argv)
     //
     // jimi::crc32c_hw_u32()
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
+    benchmark_jimi_crc32c_hw_u32(data, kTotalBytes);
 
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = jimi::crc32c_hw_u32(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" crc32c_hw_u32()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-
-#if CRC32C_IS_X86_64
     //
     // jimi::crc32c_hw_u64()
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
+    benchmark_jimi_crc32c_hw_u64(data, kTotalBytes);
 
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = jimi::crc32c_hw_u64(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" crc32c_hw_u64()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-#endif // CRC32C_IS_X86_64
-
-#if CRC32C_IS_X86_64
     //
-    // jimi::crc32c_hw()
+    // jimi::crc32c_hw_triplet_loop()
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = jimi::crc32c_hw(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" crc32c_hw()       : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-#endif // CRC32C_IS_X86_64
+    benchmark_jimi_crc32c_hw_triplet_loop(data, kTotalBytes);
 
 #endif // __SSE4_2__
 
     //
     // folly::crc32c()
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = folly::crc32c((const uint8_t *)(data + i), kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" folly::crc32c()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
+    benchmark_folly_crc32c(data, kTotalBytes);
 
     printf("\n");
 
 #if __SSE4_2__
 
     //
-    // jimi::crc32c_hw_x86()
+    // jimi::crc32c_hw_one_loop_x86()
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
+    benchmark_jimi_crc32c_hw_one_loop_x86(data, kTotalBytes);
 
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = jimi::crc32c_hw_x86(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" crc32c_hw_x86()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-
-#if CRC32C_IS_X86_64
     //
-    // jimi::crc32c_hw_x64()
+    // jimi::crc32c_hw_one_loop_x64()
     //
-    totalBytes = kTotalBytes;
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = jimi::crc32c_hw_x64(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-    printf(" crc32c_hw_x64()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, ((double)totalBytes / (1024 * 1024)) / duration);
-#endif // CRC32C_IS_X86_64
+    benchmark_jimi_crc32c_hw_one_loop_x64(data, kTotalBytes);
 
 #endif // __SSE4_2__
 

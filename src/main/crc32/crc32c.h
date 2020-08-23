@@ -201,88 +201,6 @@ static const uint64_t crc32c_clmul_constants[] = {
 };
 // clang-format on
 
-#if __SSE4_2__
-
-static uint32_t crc32c_hw_x86(const char * data, size_t length)
-{
-    assert(data != nullptr);
-
-    static const ssize_t kStepSize = sizeof(uint32_t);
-    static const uint32_t kMaskOne = 0xFFFFFFFFUL;
-    const char * data_end = data + length;
-
-    uint32_t crc32 = ~0;
-    ssize_t remain = length;
-
-    do {
-        if (likely(remain >= kStepSize)) {
-            assert(data < data_end);
-            uint32_t data32 = *(uint32_t *)(data);
-            crc32 = _mm_crc32_u32(crc32, data32);
-            data += kStepSize;
-            remain -= kStepSize;
-        }
-        else {
-            assert((data_end - data) >= 0 && (data_end - data) < kStepSize);
-            assert((data_end - data) == remain);
-            assert(remain >= 0);
-            if (likely(remain > 0)) {
-                uint32_t data32 = *(uint32_t *)(data);
-                uint32_t rest = (uint32_t)(kStepSize - remain);
-                assert(rest > 0 && rest < (uint32_t)kStepSize);
-                uint32_t mask = kMaskOne >> (rest * 8U);
-                data32 &= mask;
-                crc32 = _mm_crc32_u32(crc32, data32);
-            }
-            break;
-        }
-    } while (1);
-
-    return ~crc32;
-}
-
-#if CRC32C_IS_X86_64
-
-static uint32_t crc32c_hw_x64(const char * data, size_t length)
-{
-    assert(data != nullptr);
-
-    static const ssize_t kStepSize = sizeof(uint64_t);
-    static const uint64_t kMaskOne = 0xFFFFFFFFFFFFFFFFULL;
-    const char * data_end = data + length;
-
-    uint64_t crc64 = ~0;
-    ssize_t remain = length;
-
-    do {
-        if (likely(remain >= kStepSize)) {
-            assert(data < data_end);
-            uint64_t data64 = *(uint64_t *)(data);
-            crc64 = _mm_crc32_u64(crc64, data64);
-            data += kStepSize;
-            remain -= kStepSize;
-        }
-        else {
-            assert((data_end - data) >= 0 && (data_end - data) < kStepSize);
-            assert((data_end - data) == remain);
-            assert(remain >= 0);
-            if (likely(remain > 0)) {
-                uint64_t data64 = *(uint64_t *)(data);
-                size_t rest = (size_t)(kStepSize - remain);
-                assert(rest > 0 && rest < (size_t)kStepSize);
-                uint64_t mask = kMaskOne >> (rest * 8U);
-                data64 &= mask;
-                crc64 = _mm_crc32_u64(crc64, data64);
-            }
-            break;
-        }
-    } while (1);
-
-    return (uint32_t)~crc64;
-}
-
-#endif // CRC32C_IS_X86_64
-
 static uint32_t crc32c_hw_u32(const char * data, size_t length)
 {
     assert(data != nullptr);
@@ -336,6 +254,88 @@ static uint32_t crc32c_hw_u64(const char * data, size_t length)
 
 #endif // CRC32C_IS_X86_64
 
+#if __SSE4_2__
+
+static uint32_t crc32c_hw_one_loop_x86(const char * data, size_t length)
+{
+    assert(data != nullptr);
+
+    static const ssize_t kStepSize = sizeof(uint32_t);
+    static const uint32_t kMaskOne = 0xFFFFFFFFUL;
+    const char * data_end = data + length;
+
+    uint32_t crc32 = ~0;
+    ssize_t remain = length;
+
+    do {
+        if (likely(remain >= kStepSize)) {
+            assert(data < data_end);
+            uint32_t data32 = *(uint32_t *)(data);
+            crc32 = _mm_crc32_u32(crc32, data32);
+            data += kStepSize;
+            remain -= kStepSize;
+        }
+        else {
+            assert((data_end - data) >= 0 && (data_end - data) < kStepSize);
+            assert((data_end - data) == remain);
+            assert(remain >= 0);
+            if (likely(remain > 0)) {
+                uint32_t data32 = *(uint32_t *)(data);
+                uint32_t rest = (uint32_t)(kStepSize - remain);
+                assert(rest > 0 && rest < (uint32_t)kStepSize);
+                uint32_t mask = kMaskOne >> (rest * 8U);
+                data32 &= mask;
+                crc32 = _mm_crc32_u32(crc32, data32);
+            }
+            break;
+        }
+    } while (1);
+
+    return ~crc32;
+}
+
+#if CRC32C_IS_X86_64
+
+static uint32_t crc32c_hw_one_loop_x64(const char * data, size_t length)
+{
+    assert(data != nullptr);
+
+    static const ssize_t kStepSize = sizeof(uint64_t);
+    static const uint64_t kMaskOne = 0xFFFFFFFFFFFFFFFFULL;
+    const char * data_end = data + length;
+
+    uint64_t crc64 = ~0;
+    ssize_t remain = length;
+
+    do {
+        if (likely(remain >= kStepSize)) {
+            assert(data < data_end);
+            uint64_t data64 = *(uint64_t *)(data);
+            crc64 = _mm_crc32_u64(crc64, data64);
+            data += kStepSize;
+            remain -= kStepSize;
+        }
+        else {
+            assert((data_end - data) >= 0 && (data_end - data) < kStepSize);
+            assert((data_end - data) == remain);
+            assert(remain >= 0);
+            if (likely(remain > 0)) {
+                uint64_t data64 = *(uint64_t *)(data);
+                size_t rest = (size_t)(kStepSize - remain);
+                assert(rest > 0 && rest < (size_t)kStepSize);
+                uint64_t mask = kMaskOne >> (rest * 8U);
+                data64 &= mask;
+                crc64 = _mm_crc32_u64(crc64, data64);
+            }
+            break;
+        }
+    } while (1);
+
+    return (uint32_t)~crc64;
+}
+
+#endif // CRC32C_IS_X86_64
+
 static inline uint64_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, uint32_t crc1, uint32_t crc2, const uint64_t * next2) {
     assert(block_size > 0 && block_size <= (sizeof(crc32c_clmul_constants) / 2));
     const __m128i multiplier = _mm_load_si128(reinterpret_cast<const __m128i *>(crc32c_clmul_constants) + block_size - 1);
@@ -375,7 +375,7 @@ static inline uint64_t crc32c_combine_crc_u64(size_t block_size, uint64_t crc0, 
 
 #endif // CRC32C_IS_X86_64
 
-static inline uint32_t __crc32c_hw_u32(const char * data, size_t length, uint32_t crc_init)
+static inline uint32_t crc32c_hw_triplet_loop_u32(const char * data, size_t length, uint32_t crc_init)
 {
     assert(data != nullptr);
     uint32_t crc32 = ~crc_init;
@@ -401,7 +401,7 @@ static inline uint32_t __crc32c_hw_u32(const char * data, size_t length, uint32_
 
 #if CRC32C_IS_X86_64
 
-static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_t crc_init)
+static inline uint32_t crc32c_hw_triplet_loop_u64(const char * data, size_t length, uint32_t crc_init)
 {
     static const size_t kStepSize = sizeof(uint64_t);
     static const size_t kAlignment = sizeof(uint64_t);
@@ -452,9 +452,9 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
             uint64_t * next0 = src;
             uint64_t * next1 = src + 1 * block_size;
             uint64_t * next2 = src + 2 * block_size;
-#if 0
-            size_t loop = block_size / 2;
-            do {
+#if 1
+            size_t loop = (block_size - 1) / 2;
+            while (likely(loop > 0)) {
                 crc0 = _mm_crc32_u64(crc0, *next0);
                 crc1 = _mm_crc32_u64(crc1, *next1);
                 crc2 = _mm_crc32_u64(crc2, *next2);
@@ -463,13 +463,27 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
                 ++next2;
                 crc0 = _mm_crc32_u64(crc0, *next0);
                 crc1 = _mm_crc32_u64(crc1, *next1);
-                --loop;
-                if (likely(loop > 0))
-                    crc2 = _mm_crc32_u64(crc2, *next2);
+                crc2 = _mm_crc32_u64(crc2, *next2);
                 ++next0;
                 ++next1;
                 ++next2;
-            } while (likely(loop > 0));
+                --loop;
+            }
+
+            if ((block_size & size_t(1)) == 0) {
+                crc0 = _mm_crc32_u64(crc0, *next0);
+                crc1 = _mm_crc32_u64(crc1, *next1);
+                crc2 = _mm_crc32_u64(crc2, *next2);
+                ++next0;
+                ++next1;
+                ++next2;
+            }
+
+            crc0 = _mm_crc32_u64(crc0, *next0);
+            crc1 = _mm_crc32_u64(crc1, *next1);
+            ++next0;
+            ++next1;
+            ++next2;
 #else
             size_t loop = block_size - 1;
             while (likely(loop > 0)) {
@@ -540,12 +554,12 @@ static inline uint32_t __crc32c_hw_u64(const char * data, size_t length, uint32_
 
 #endif // CRC32C_IS_X86_64
 
-static uint32_t crc32c_hw(const char * data, size_t length, uint32_t crc_init = 0U)
+static uint32_t crc32c_hw_triplet_loop(const char * data, size_t length, uint32_t crc_init = 0U)
 {
 #if CRC32C_IS_X86_64
-    return __crc32c_hw_u64(data, length, crc_init);
+    return crc32c_hw_triplet_loop_u64(data, length, crc_init);
 #else
-    return __crc32c_hw_u32(data, length, crc_init);
+    return crc32c_hw_triplet_loop_u32(data, length, crc_init);
 #endif
 }
 
