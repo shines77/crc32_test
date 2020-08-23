@@ -344,14 +344,12 @@ static inline uint32_t crc32c_combine_crc_u32(size_t block_size, uint32_t crc0, 
     const __m128i crc1_xmm = _mm_cvtsi32_si128((int32_t)crc1);
     const __m128i result1  = _mm_clmulepi64_si128(crc1_xmm, multiplier, 0x10);
     const __m128i result   = _mm_xor_si128(result0, result1);
-
     uint32_t crc0_low  = _mm_cvtsi128_si32(result);
     uint32_t crc0_high = _mm_extract_epi32(result, 0x01);
     crc0_low = crc0_low ^ *((uint32_t *)next2 - 2);
     crc0_high = crc0_high ^ *((uint32_t *)next2 - 1);
     uint32_t crc32 = _mm_crc32_u32(crc2, crc0_low);
     crc32 = _mm_crc32_u32(crc32, crc0_high);
-
     return crc32;
 }
 
