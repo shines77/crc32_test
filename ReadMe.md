@@ -3,13 +3,13 @@
 
 ## Introduction
 
-A test routine for fast `crc32` and `crc32c` algorithm.
+A test routine for fast `crc32` and `crc32c` algorithm. The `_mm_crc32_u64()` and `_mm_crc32_u32()` hardware instructions of the `Intel SSE 4.2` instruction set are used.
 
 ## 简介 [Chinese]
 
-一个关于 `crc32` 和 `crc32c` 算法的测试程序。
+这是一个关于 `crc32` 和 `crc32c` 算法的测试程序，使用了 `Intel SSE 4.2` 指令集的 `_mm_crc32_u64()` 和 `_mm_crc32_u32()` 硬件指令。
 
-## Reference (引用)
+## 引用 / Reference
 
 `Fast CRC32`: [http://create.stephan-brumme.com/crc32/](http://create.stephan-brumme.com/crc32/)
 
@@ -20,20 +20,50 @@ A test routine for fast `crc32` and `crc32c` algorithm.
 
 * `/folly/hash/Checksum.h`
 
-## Reference Article (参考文章)
+## 参考文章 / Reference Article
 
 `zhihu.com`: [https://www.zhihu.com/question/280252145](https://www.zhihu.com/question/280252145)
 
-## Dependent library (依赖库)
+## 依赖库 / Dependent library
 
 `Boost library`:
 
 * boost.crc
 * boost.preprocessor
 
-## Benchmark (性能测试)
+## 性能测试 / Benchmark
 
-1. Windows 10 (AMD Ryzen 1700X)
+1. Linux (Intel Xeon E5-2690 v3)
+
+* `Ubuntu 16.04 Server` - 64 bit
+* `Dual Intel Xeon E5-2690 v3` @ `2.60GHz`, (Support `SSE 4.2`)
+*  `gcc 5.4.0`
+
+```bash
+ bitwise                  : CRC32 = 0x0E225381, SUM = 0xFAB9C5C6, 0.802 sec(s), 79.765 MB/s
+ half-byte                : CRC32 = 0x08F105AF, SUM = 0xCAC04360, 0.734 sec(s), 174.290 MB/s
+ tableless (byte)         : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.444 sec(s), 177.280 MB/s
+ tableless2 (byte)        : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.438 sec(s), 178.010 MB/s
+  1 byte  at once         : CRC32 = 0x08F105AF, SUM = 0x2B010D80, 1.435 sec(s), 356.725 MB/s
+  4 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 1.062 sec(s), 964.429 MB/s
+  8 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.676 sec(s), 1513.887 MB/s
+ 4x8 bytes at once        : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.505 sec(s), 2026.246 MB/s
+ 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.331 sec(s), 3089.951 MB/s
+ 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.332 sec(s), 3081.710 MB/s
+    chunked               : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.330 sec(s), 3098.610 MB/s
+
+ folly::crc32()           : CRC32 = 0xDF220648, SUM = 0xDD955680, 0.092 sec(s), 11180.472 MB/s
+
+ crc32c_hw_u32()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.274 sec(s), 3733.894 MB/s
+ crc32c_hw_u64()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.138 sec(s), 7397.871 MB/s
+ crc32c_hw_one_loop_x86() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.273 sec(s), 3755.008 MB/s
+ crc32c_hw_one_loop_x64() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.137 sec(s), 7461.320 MB/s
+
+ crc32c_hw_triplet_loop() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.052 sec(s), 19564.910 MB/s
+ folly::crc32c()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.054 sec(s), 18926.481 MB/s
+```
+
+2. Windows 10 (AMD Ryzen 1700X)
 
 * `Windows 10 Professional Build 1809` - 64 bit
 * `AMD Ryzen 1700X` @ `3.40GHz`, Boost on `3.8GHz` (Support `SSE 4.2`)
@@ -63,11 +93,13 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  folly::crc32c()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.132 sec(s), 7760.427 MB/s
 ```
 
-2. Windows 10 (Intel i5-4210M)
+3. Windows 10 (Intel i5-4210M)
 
 * `Windows 10 Professional Build 1803` - 64 bit
 * `Intel i5-4210M` @ `2.60GHz`, Boost on `3.2GHz` (Support `SSE 4.2`)
 * `Vc 2015 update 3`
+
+较早以前的测试数据：
 
 ```bash
  bitwise           : CRC32 = 0x221F390F, 12.319 sec(s), 83.127 MB/s
@@ -92,35 +124,7 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.146 sec(s), 7029.146 MB/s
 ```
 
-3. Linux
-
-* `Ubuntu 16.04 Server` - 64 bit
-* `Intel(R) Xeon(R) CPU E5-2690 v3` @ `2.60GHz`, (Support `SSE 4.2`)
-*  `gcc 5.4.0`
-
-```bash
- bitwise                  : CRC32 = 0x0E225381, SUM = 0xFAB9C5C6, 0.802 sec(s), 79.765 MB/s
- half-byte                : CRC32 = 0x08F105AF, SUM = 0xCAC04360, 0.734 sec(s), 174.290 MB/s
- tableless (byte)         : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.444 sec(s), 177.280 MB/s
- tableless2 (byte)        : CRC32 = 0x08F105AF, SUM = 0x958086C0, 1.438 sec(s), 178.010 MB/s
-  1 byte  at once         : CRC32 = 0x08F105AF, SUM = 0x2B010D80, 1.435 sec(s), 356.725 MB/s
-  4 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 1.062 sec(s), 964.429 MB/s
-  8 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.676 sec(s), 1513.887 MB/s
- 4x8 bytes at once        : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.505 sec(s), 2026.246 MB/s
- 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.331 sec(s), 3089.951 MB/s
- 16 bytes at once         : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.332 sec(s), 3081.710 MB/s
-    chunked               : CRC32 = 0x08F105AF, SUM = 0x56021B00, 0.330 sec(s), 3098.610 MB/s
-
- folly::crc32()           : CRC32 = 0xDF220648, SUM = 0xDD955680, 0.092 sec(s), 11180.472 MB/s
-
- crc32c_hw_u32()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.274 sec(s), 3733.894 MB/s
- crc32c_hw_u64()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.138 sec(s), 7397.871 MB/s
- crc32c_hw_one_loop_x86() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.273 sec(s), 3755.008 MB/s
- crc32c_hw_one_loop_x64() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.137 sec(s), 7461.320 MB/s
-
- crc32c_hw_triplet_loop() : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.052 sec(s), 19564.910 MB/s
- folly::crc32c()          : CRC32 = 0x98387EBD, SUM = 0xFAE4F920, 0.054 sec(s), 18926.481 MB/s
-```
+4. Linux (Intel Xeon E5-2683 v3)
 
 * `Ubuntu 14.04 Server` - 64 bit
 * `Dual Intel Xeon E5-2683 v3` @ `2.00GHz`, Boost on `3.0GHz` (Support `SSE 4.2`)
@@ -151,12 +155,12 @@ A test routine for fast `crc32` and `crc32c` algorithm.
  crc32c_hw_x64()   : CRC32 = 0x24DAC648, 0.214 sec(s), 4781.217 MB/s
 ```
 
-## Contributors (贡献者)
+## 贡献者 / Contributors
 
 * `shines77`: [https://github.com/shines77](https://github.com/shines77)
 * ` Stephan Brumme`: [http://create.stephan-brumme.com/about.html](http://create.stephan-brumme.com/about.html)
 * `Facebook`: [https://github.com/facebook](https://github.com/facebook)
 
-## Official website (官网)
+## 官网 / Official website
 
 * `Github`: [https://github.com/shines77/crc32_test](https://github.com/shines77/crc32_test)
