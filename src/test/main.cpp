@@ -162,7 +162,7 @@ void benchmark_crc32_1byte_tableless2(char * data, size_t totalBytes)
     duration = clock_seconds() - startTime;
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" tableless (byte2)        : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" tableless2 (byte)        : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -573,12 +573,12 @@ int main(int argn, char ** argv)
     //
     // one byte at once #2 (without lookup tables)
     //
-    benchmark_crc32_1byte_tableless2(data, kTotalBytes / 2);
+    benchmark_crc32_1byte_tableless2(data, kTotalBytes / 4);
 
     //
     // one byte at once
     //
-    benchmark_crc32_1byte(data, kTotalBytes);
+    benchmark_crc32_1byte(data, kTotalBytes / 2);
 
     //
     // four bytes at once
