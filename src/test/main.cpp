@@ -431,54 +431,6 @@ void benchmark_jimi_crc32c_hw_u64(char * data, size_t totalBytes)
 }
 
 //
-// jimi::crc32c_hw_triplet_loop()
-//
-void benchmark_jimi_crc32c_hw_triplet_loop(char * data, size_t totalBytes)
-{
-    double startTime, duration, throughput;
-    size_t iterations;
-    uint32_t crc32, crc32_sum;
-
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = jimi::crc32c_hw_triplet_loop(data + i, kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-
-    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" crc32c_hw_triplet_loop() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, throughput);
-}
-
-//
-// folly::crc32c()
-//
-void benchmark_folly_crc32c(char * data, size_t totalBytes)
-{
-    double startTime, duration, throughput;
-    size_t iterations;
-    uint32_t crc32, crc32_sum;
-
-    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
-    crc32_sum = 0;
-
-    startTime = clock_seconds();
-    for (size_t i = 0; i < iterations; ++i) {
-        crc32 = folly::crc32c((const uint8_t *)(data + i), kStepBytes);
-        crc32_sum += crc32;
-    }
-    duration = clock_seconds() - startTime;
-
-    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" folly::crc32c()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
-           crc32, crc32_sum, duration, throughput);
-}
-
-//
 // jimi::crc32c_hw_one_loop_x86()
 //
 void benchmark_jimi_crc32c_hw_one_loop_x86(char * data, size_t totalBytes)
@@ -526,6 +478,54 @@ void benchmark_jimi_crc32c_hw_one_loop_x64(char * data, size_t totalBytes)
     printf(" crc32c_hw_one_loop_x64() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif // CRC32C_IS_X86_64
+}
+
+//
+// jimi::crc32c_hw_triplet_loop()
+//
+void benchmark_jimi_crc32c_hw_triplet_loop(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jimi::crc32c_hw_triplet_loop(data + i, kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" crc32c_hw_triplet_loop() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// folly::crc32c()
+//
+void benchmark_folly_crc32c(char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = folly::crc32c((const uint8_t *)(data + i), kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" folly::crc32c()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
 }
 
 int main(int argn, char ** argv)
