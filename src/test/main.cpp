@@ -32,25 +32,24 @@
 
 #ifndef __COMPILER_BARRIER
 #if defined(_MSC_VER) || defined(__ICL) || defined(__INTEL_COMPILER)
+#include <intrin.h>
 #if defined(_M_AMD64)
 #pragma intrinsic(_ReadWriteBarrier)
-#define __COMPILER_BARRIER()        _ReadWriteBarrier()
-#else
-#define __COMPILER_BARRIER()        (void)(0)
 #endif
+#define __COMPILER_BARRIER()        _ReadWriteBarrier()
 #else
 #define __COMPILER_BARRIER()        asm volatile ("" : : : "memory")
 #endif
-#endif
+#endif // __COMPILER_BARRIER
 
 /// one gigabyte
 #ifdef NDEBUG
 static const size_t kTotalBytes = 1024 * 1024 * 1024;
 #else
-static const size_t kTotalBytes = 128 * 1024 * 1024;
+static const size_t kTotalBytes = 64 * 1024 * 1024;
 #endif
 
-static const size_t kStepBytes = 512 * 1024;
+static const size_t kStepBytes = 1024 * 1024;
 
 /// 4k chunks during last test
 static const size_t kDefaultChunkSize = 4 * 1024;
@@ -98,7 +97,7 @@ void benchmark_crc32_bitwise(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" bitwise                  : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" bitwise                  : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -121,7 +120,7 @@ void benchmark_crc32_halfbyte(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" half-byte                : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" half-byte                : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -147,7 +146,7 @@ void benchmark_crc32_1byte_tableless(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" tableless (byte)         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" tableless (byte)         : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -173,7 +172,7 @@ void benchmark_crc32_1byte_tableless2(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" tableless2 (byte)        : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" tableless2 (byte)        : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -200,7 +199,7 @@ void benchmark_crc32_1byte(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf("  1 byte  at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf("  1 byte  at once         : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif
 }
@@ -228,7 +227,7 @@ void benchmark_crc32_4byte(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf("  4 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf("  4 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif
 }
@@ -256,7 +255,7 @@ void benchmark_crc32_8byte(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf("  8 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf("  8 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif
 }
@@ -284,7 +283,7 @@ void benchmark_crc32_4x8byte(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" 4x8 bytes at once        : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" 4x8 bytes at once        : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif
 }
@@ -312,7 +311,7 @@ void benchmark_crc32_16byte(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" 16 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" 16 bytes at once         : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif
 }
@@ -340,7 +339,7 @@ void benchmark_crc32_16byte_prefetch(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" 16 bytes at once (*)     : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" 16 bytes at once (*)     : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif
 }
@@ -377,7 +376,7 @@ void benchmark_crc32_fast(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf("    chunked               : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf("    chunked               : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -403,7 +402,7 @@ void benchmark_folly_crc32(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" folly::crc32()           : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" folly::crc32()           : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -429,7 +428,7 @@ void benchmark_folly_crc32c(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" folly::crc32c()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" folly::crc32c()          : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -455,7 +454,7 @@ void benchmark_jimi_crc32c_hw_u32(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" crc32c_hw_u32()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" crc32c_hw_u32()          : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -482,7 +481,7 @@ void benchmark_jimi_crc32c_hw_u64(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" crc32c_hw_u64()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" crc32c_hw_u64()          : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif // CRC32C_IS_X86_64
 }
@@ -509,7 +508,7 @@ void benchmark_jimi_crc32c_hw_one_loop_x86(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" crc32c_hw_1_loop_x86()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" crc32c_hw_1_loop_x86()   : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -536,7 +535,7 @@ void benchmark_jimi_crc32c_hw_one_loop_x64(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" crc32c_hw_1_loop_x64()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" crc32c_hw_1_loop_x64()   : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif // CRC32C_IS_X86_64
 }
@@ -563,7 +562,7 @@ void benchmark_jimi_crc32c_hw_triplet_loop(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" crc32c_hw_3_loop()       : CRC32 = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" crc32c_hw_3_loop()       : CRC32 = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -589,7 +588,7 @@ void benchmark_FNV1A_Yoshimura(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" FNV1A_Yoshimura()        : HashV = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" FNV1A_Yoshimura()        : HashV = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            hash32, hash32_sum, duration, throughput);
 }
 
@@ -615,7 +614,7 @@ void benchmark_FNV1A_Yoshimitsu_TRIAD(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" FNV1A_Yoshimitsu_TRIAD() : HashV = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" FNV1A_Yoshimitsu_TRIAD() : HashV = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            hash32, hash32_sum, duration, throughput);
 }
 
@@ -641,7 +640,7 @@ void benchmark_FNV1A_penumbra(const char * data, size_t totalBytes)
     duration = sw.getElapsedMillisec();
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration * 1000.0;
-    printf(" FNV1A_penumbra()         : HashV = 0x%08X, SUM = 0x%08X, %.3f ms, %.3f MB/s\n",
+    printf(" FNV1A_penumbra()         : HashV = 0x%08X, SUM = 0x%08X, %7.2f ms, %.3f MB/s\n",
            hash32, hash32_sum, duration, throughput);
 }
 

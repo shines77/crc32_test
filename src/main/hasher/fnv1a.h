@@ -220,24 +220,12 @@ uint32_t FNV1A_Yoshimitsu_TRIADii_XMM(const char * data, size_t data_len)
         __hash32A = _mm_mullo_epi32(_mm_xor_si128(__hash32A, __hash32C), __kPRIME);
 #endif // __SSE2__
 
-#ifdef _MSC_VER
-        hash32A = (hash32A ^ __hash32A.m128i_u32[0]) * kPRIME;
-        hash32B = (hash32B ^ __hash32A.m128i_u32[3]) * kPRIME;
-        hash32A = (hash32A ^ __hash32A.m128i_u32[1]) * kPRIME;
-        hash32B = (hash32B ^ __hash32A.m128i_u32[2]) * kPRIME;
-#elif defined(__SEE4_1__)
-        hash32A = (hash32A ^ _exract_u32(__hash32A, 0x00)) * kPRIME;
-        hash32B = (hash32B ^ _exract_u32(__hash32A, 0x03)) * kPRIME;
-        hash32A = (hash32A ^ _exract_u32(__hash32A, 0x01)) * kPRIME;
-        hash32B = (hash32B ^ _exract_u32(__hash32A, 0x02)) * kPRIME;
-#elif defined(__SEE2__)
         alignas(16) uint32_t m128i_u32[4];
         _mm_store_si128((__m128i *)m128i_u32, __hash32A);
         hash32A = (hash32A ^ m128i_u32[0]) * kPRIME;
         hash32B = (hash32B ^ m128i_u32[3]) * kPRIME;
         hash32A = (hash32A ^ m128i_u32[1]) * kPRIME;
         hash32B = (hash32B ^ m128i_u32[2]) * kPRIME;
-#endif
     }
     else if (data_len >= kMinStepSize) {    // kMinStepSize = 3 * (2 * sizeof(uint32_t)) = 24
 #else
@@ -387,24 +375,12 @@ uint32_t FNV1A_penumbra(const char * data, size_t data_len)
         __hash32A = _mm_mullo_epi32(_mm_xor_si128(__hash32A, __hash32C), __kPRIME);
 #endif // __SSE2__
 
-#ifdef _MSC_VER
-        hash32A = (hash32A ^ __hash32A.m128i_u32[0]) * kPRIME;
-        hash32B = (hash32B ^ __hash32A.m128i_u32[3]) * kPRIME;
-        hash32A = (hash32A ^ __hash32A.m128i_u32[1]) * kPRIME;
-        hash32B = (hash32B ^ __hash32A.m128i_u32[2]) * kPRIME;
-#elif defined(__SEE4_1__)
-        hash32A = (hash32A ^ _exract_u32(__hash32A, 0x00)) * kPRIME;
-        hash32B = (hash32B ^ _exract_u32(__hash32A, 0x03)) * kPRIME;
-        hash32A = (hash32A ^ _exract_u32(__hash32A, 0x01)) * kPRIME;
-        hash32B = (hash32B ^ _exract_u32(__hash32A, 0x02)) * kPRIME;
-#elif defined(__SEE2__)
         alignas(16) uint32_t m128i_u32[4];
         _mm_store_si128((__m128i *)m128i_u32, __hash32A);
         hash32A = (hash32A ^ m128i_u32[0]) * kPRIME;
         hash32B = (hash32B ^ m128i_u32[3]) * kPRIME;
         hash32A = (hash32A ^ m128i_u32[1]) * kPRIME;
         hash32B = (hash32B ^ m128i_u32[2]) * kPRIME;
-#endif
     }
     else if (data_len >= kMinStepSize) {    // kMinStepSize = 3 * (2 * sizeof(uint32_t)) = 24
 #else
