@@ -72,5 +72,8 @@
     <ClInclude Include="..\..\..\src\main\hasher\fnv1a.h">
       <Filter>src\hasher</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\test\StopWatch.h">
+      <Filter>src\test</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

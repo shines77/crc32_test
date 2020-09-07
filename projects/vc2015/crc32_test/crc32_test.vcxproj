@@ -176,6 +176,7 @@
     <ClInclude Include="..\..\..\deps\folly\hash\detail\ChecksumDetail.h" />
     <ClInclude Include="..\..\..\deps\folly\Portability.h" />
     <ClInclude Include="..\..\..\src\main\hasher\fnv1a.h" />
+    <ClInclude Include="..\..\..\src\test\StopWatch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
