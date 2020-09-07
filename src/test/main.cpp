@@ -25,6 +25,7 @@
 
 #include <FastCRC32/Crc32.h>
 #include "crc32/crc32c.h"
+#include "hasher/fnv1a.h"
 #include <folly/hash/Checksum.h>
 
 #ifndef __COMPILER_BARRIER
@@ -76,7 +77,7 @@ static double clock_seconds()
     __COMPILER_BARRIER();
 }
 
-void benchmark_crc32_bitwise(char * data, size_t totalBytes)
+void benchmark_crc32_bitwise(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -97,7 +98,7 @@ void benchmark_crc32_bitwise(char * data, size_t totalBytes)
            crc32, crc32_sum, duration, throughput);
 }
 
-void benchmark_crc32_halfbyte(char * data, size_t totalBytes)
+void benchmark_crc32_halfbyte(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -121,7 +122,7 @@ void benchmark_crc32_halfbyte(char * data, size_t totalBytes)
 //
 // one byte at once (without lookup tables)
 //
-void benchmark_crc32_1byte_tableless(char * data, size_t totalBytes)
+void benchmark_crc32_1byte_tableless(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -145,7 +146,7 @@ void benchmark_crc32_1byte_tableless(char * data, size_t totalBytes)
 //
 // one byte at once #2 (without lookup tables)
 //
-void benchmark_crc32_1byte_tableless2(char * data, size_t totalBytes)
+void benchmark_crc32_1byte_tableless2(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -169,7 +170,7 @@ void benchmark_crc32_1byte_tableless2(char * data, size_t totalBytes)
 //
 // one byte at once
 //
-void benchmark_crc32_1byte(char * data, size_t totalBytes)
+void benchmark_crc32_1byte(const char * data, size_t totalBytes)
 {
 #ifdef CRC32_USE_LOOKUP_TABLE_BYTE
     double startTime, duration, throughput;
@@ -195,7 +196,7 @@ void benchmark_crc32_1byte(char * data, size_t totalBytes)
 //
 // four bytes at once
 //
-void benchmark_crc32_4byte(char * data, size_t totalBytes)
+void benchmark_crc32_4byte(const char * data, size_t totalBytes)
 {
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_4
     double startTime, duration, throughput;
@@ -221,7 +222,7 @@ void benchmark_crc32_4byte(char * data, size_t totalBytes)
 //
 // eight bytes at once
 //
-void benchmark_crc32_8byte(char * data, size_t totalBytes)
+void benchmark_crc32_8byte(const char * data, size_t totalBytes)
 {
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
     double startTime, duration, throughput;
@@ -247,7 +248,7 @@ void benchmark_crc32_8byte(char * data, size_t totalBytes)
 //
 // eight bytes at once, unrolled 4 times (=> 32 bytes per loop)
 //
-void benchmark_crc32_4x8byte(char * data, size_t totalBytes)
+void benchmark_crc32_4x8byte(const char * data, size_t totalBytes)
 {
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_8
     double startTime, duration, throughput;
@@ -273,7 +274,7 @@ void benchmark_crc32_4x8byte(char * data, size_t totalBytes)
 //
 // sixteen bytes at once
 //
-void benchmark_crc32_16byte(char * data, size_t totalBytes)
+void benchmark_crc32_16byte(const char * data, size_t totalBytes)
 {
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
     double startTime, duration, throughput;
@@ -299,7 +300,7 @@ void benchmark_crc32_16byte(char * data, size_t totalBytes)
 //
 // sixteen bytes at once (prefetch)
 //
-void benchmark_crc32_16byte_prefetch(char * data, size_t totalBytes)
+void benchmark_crc32_16byte_prefetch(const char * data, size_t totalBytes)
 {
 #ifdef CRC32_USE_LOOKUP_TABLE_SLICING_BY_16
     double startTime, duration, throughput;
@@ -325,7 +326,7 @@ void benchmark_crc32_16byte_prefetch(char * data, size_t totalBytes)
 //
 // process in 4k chunks
 //
-void benchmark_crc32_fast(char * data, size_t totalBytes)
+void benchmark_crc32_fast(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -338,7 +339,7 @@ void benchmark_crc32_fast(char * data, size_t totalBytes)
     for (size_t i = 0; i < iterations; ++i) {
         crc32 = 0; // also default parameter of crc32_xx functions
         size_t bytesProcessed = 0;
-        char * data_start = data + i;
+        const char * data_start = data + i;
         while (bytesProcessed < kStepBytes) {
             size_t bytesLeft = kStepBytes - bytesProcessed;
             size_t chunkSize = (kDefaultChunkSize < bytesLeft) ? kDefaultChunkSize : bytesLeft;
@@ -359,7 +360,7 @@ void benchmark_crc32_fast(char * data, size_t totalBytes)
 //
 // folly::crc32()
 //
-void benchmark_folly_crc32(char * data, size_t totalBytes)
+void benchmark_folly_crc32(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -381,9 +382,33 @@ void benchmark_folly_crc32(char * data, size_t totalBytes)
 }
 
 //
+// folly::crc32c()
+//
+void benchmark_folly_crc32c(const char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = folly::crc32c((const uint8_t *)(data + i), kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" folly::crc32c()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
 // jimi::crc32c_hw_u32()
 //
-void benchmark_jimi_crc32c_hw_u32(char * data, size_t totalBytes)
+void benchmark_jimi_crc32c_hw_u32(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -407,7 +432,7 @@ void benchmark_jimi_crc32c_hw_u32(char * data, size_t totalBytes)
 //
 // jimi::crc32c_hw_u64()
 //
-void benchmark_jimi_crc32c_hw_u64(char * data, size_t totalBytes)
+void benchmark_jimi_crc32c_hw_u64(const char * data, size_t totalBytes)
 {
 #if CRC32C_IS_X86_64
     double startTime, duration, throughput;
@@ -433,7 +458,7 @@ void benchmark_jimi_crc32c_hw_u64(char * data, size_t totalBytes)
 //
 // jimi::crc32c_hw_one_loop_x86()
 //
-void benchmark_jimi_crc32c_hw_one_loop_x86(char * data, size_t totalBytes)
+void benchmark_jimi_crc32c_hw_one_loop_x86(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -450,14 +475,14 @@ void benchmark_jimi_crc32c_hw_one_loop_x86(char * data, size_t totalBytes)
     duration = clock_seconds() - startTime;
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" crc32c_hw_one_loop_x86() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" crc32c_hw_1_loop_x86()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
 //
 // jimi::crc32c_hw_one_loop_x64()
 //
-void benchmark_jimi_crc32c_hw_one_loop_x64(char * data, size_t totalBytes)
+void benchmark_jimi_crc32c_hw_one_loop_x64(const char * data, size_t totalBytes)
 {
 #if CRC32C_IS_X86_64
     double startTime, duration, throughput;
@@ -475,7 +500,7 @@ void benchmark_jimi_crc32c_hw_one_loop_x64(char * data, size_t totalBytes)
     duration = clock_seconds() - startTime;
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" crc32c_hw_one_loop_x64() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" crc32c_hw_1_loop_x64()   : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 #endif // CRC32C_IS_X86_64
 }
@@ -483,7 +508,7 @@ void benchmark_jimi_crc32c_hw_one_loop_x64(char * data, size_t totalBytes)
 //
 // jimi::crc32c_hw_triplet_loop()
 //
-void benchmark_jimi_crc32c_hw_triplet_loop(char * data, size_t totalBytes)
+void benchmark_jimi_crc32c_hw_triplet_loop(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -500,14 +525,14 @@ void benchmark_jimi_crc32c_hw_triplet_loop(char * data, size_t totalBytes)
     duration = clock_seconds() - startTime;
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" crc32c_hw_triplet_loop() : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" crc32c_hw_3_loop()       : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
 //
-// folly::crc32c()
+// jstd::hasher::FNV1A_Yoshimura()
 //
-void benchmark_folly_crc32c(char * data, size_t totalBytes)
+void benchmark_FNV1A_Yoshimura(const char * data, size_t totalBytes)
 {
     double startTime, duration, throughput;
     size_t iterations;
@@ -518,13 +543,61 @@ void benchmark_folly_crc32c(char * data, size_t totalBytes)
 
     startTime = clock_seconds();
     for (size_t i = 0; i < iterations; ++i) {
-        crc32 = folly::crc32c((const uint8_t *)(data + i), kStepBytes);
+        crc32 = jstd::hasher::FNV1A_Yoshimura((const char *)(data + i), kStepBytes);
         crc32_sum += crc32;
     }
     duration = clock_seconds() - startTime;
 
     throughput = ((double)totalBytes / (1024 * 1024)) / duration;
-    printf(" folly::crc32c()          : CRC32 = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+    printf(" FNV1A_Yoshimura()        : HashV = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// jstd::hasher::FNV1A_Yoshimitsu_TRIADii_XMM()
+//
+void benchmark_FNV1A_Yoshimitsu_TRIAD(const char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jstd::hasher::FNV1A_Yoshimitsu_TRIADii_XMM((const char *)(data + i), kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" FNV1A_Yoshimitsu_TRIAD() : HashV = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
+           crc32, crc32_sum, duration, throughput);
+}
+
+//
+// jstd::hasher::FNV1A_penumbra()
+//
+void benchmark_FNV1A_penumbra(const char * data, size_t totalBytes)
+{
+    double startTime, duration, throughput;
+    size_t iterations;
+    uint32_t crc32, crc32_sum;
+
+    iterations = (totalBytes + kStepBytes - 1) / kStepBytes;
+    crc32_sum = 0;
+
+    startTime = clock_seconds();
+    for (size_t i = 0; i < iterations; ++i) {
+        crc32 = jstd::hasher::FNV1A_penumbra((const char *)(data + i), kStepBytes);
+        crc32_sum += crc32;
+    }
+    duration = clock_seconds() - startTime;
+
+    throughput = ((double)totalBytes / (1024 * 1024)) / duration;
+    printf(" FNV1A_penumbra()         : HashV = 0x%08X, SUM = 0x%08X, %.3f sec(s), %.3f MB/s\n",
            crc32, crc32_sum, duration, throughput);
 }
 
@@ -555,105 +628,80 @@ int main(int argn, char ** argv)
         randomNumber = 1664525 * randomNumber + 1013904223;
     }
 
-    //
     // bitwise
-    //
     benchmark_crc32_bitwise(data, kTotalBytes / 16);
 
-    //
     // half-byte
-    //
     benchmark_crc32_halfbyte(data, kTotalBytes / 8);
 
-    //
     // one byte at once (without lookup tables)
-    //
     benchmark_crc32_1byte_tableless(data, kTotalBytes / 4);
 
-    //
     // one byte at once #2 (without lookup tables)
-    //
     benchmark_crc32_1byte_tableless2(data, kTotalBytes / 4);
 
-    //
     // one byte at once
-    //
     benchmark_crc32_1byte(data, kTotalBytes / 4);
 
-    //
     // four bytes at once
-    //
     benchmark_crc32_4byte(data, kTotalBytes / 2);
 
-    //
     // eight bytes at once
-    //
     benchmark_crc32_8byte(data, kTotalBytes);
 
-    //
     // eight bytes at once, unrolled 4 times (=> 32 bytes per loop)
-    //
     benchmark_crc32_4x8byte(data, kTotalBytes);
 
-    //
     // sixteen bytes at once
-    //
     benchmark_crc32_16byte(data, kTotalBytes);
 
-    //
     // sixteen bytes at once (prefetch)
-    //
     //benchmark_crc32_16byte_prefetch(data, kTotalBytes);
 
-    //
     // process in 4k chunks
-    //
     benchmark_crc32_fast(data, kTotalBytes);
 
     printf("\n");
 
-    //
     // folly::crc32()
-    //
     benchmark_folly_crc32(data, kTotalBytes);
+
+    // folly::crc32c()
+    benchmark_folly_crc32c(data, kTotalBytes);
 
     printf("\n");
 
 #if __SSE4_2__
 
-    //
     // jimi::crc32c_hw_u32()
-    //
     benchmark_jimi_crc32c_hw_u32(data, kTotalBytes);
 
-    //
     // jimi::crc32c_hw_u64()
-    //
     benchmark_jimi_crc32c_hw_u64(data, kTotalBytes);
 
-    //
     // jimi::crc32c_hw_one_loop_x86()
-    //
     benchmark_jimi_crc32c_hw_one_loop_x86(data, kTotalBytes);
 
-    //
     // jimi::crc32c_hw_one_loop_x64()
-    //
     benchmark_jimi_crc32c_hw_one_loop_x64(data, kTotalBytes);
 
     printf("\n");
 
-    //
     // jimi::crc32c_hw_triplet_loop()
-    //
     benchmark_jimi_crc32c_hw_triplet_loop(data, kTotalBytes);
 
 #endif // __SSE4_2__
 
-    //
-    // folly::crc32c()
-    //
-    benchmark_folly_crc32c(data, kTotalBytes);
+    printf("\n");
+
+    // jstd::hasher::FNV1A_Yoshimura()
+    benchmark_FNV1A_Yoshimura(data, kTotalBytes);
+
+    // jstd::hasher::FNV1A_Yoshimitsu_TRIADii_XMM()
+    benchmark_FNV1A_Yoshimitsu_TRIAD(data, kTotalBytes);
+
+    // jstd::hasher::FNV1A_penumbra()
+    benchmark_FNV1A_penumbra(data, kTotalBytes);
 
     printf("\n");
 
