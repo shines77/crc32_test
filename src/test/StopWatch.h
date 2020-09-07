@@ -11,6 +11,7 @@
 
 #ifndef __COMPILER_BARRIER
 #if defined(_MSC_VER) || defined(__ICL) || defined(__INTEL_COMPILER)
+#include <intrin.h>
 #define __COMPILER_BARRIER()        _ReadWriteBarrier()
 #else
 #define __COMPILER_BARRIER()        asm volatile ("" : : : "memory")
@@ -26,8 +27,8 @@ class BasicStopWatch {
 public:
     typedef T float_type;
 
-    typedef std::chrono::high_resolution_clock::time_point      time_point;
-    typedef std::chrono::duration<float_type, std::milli>       duration_ms;
+    typedef std::chrono::high_resolution_clock::time_point  time_point;
+    typedef std::chrono::duration<float_type, std::milli>   duration_ms;
 
 private:
     time_point startTime_, endTime_;
