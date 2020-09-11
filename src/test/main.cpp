@@ -79,14 +79,14 @@ static double clock_seconds()
 void cpu_warmup(int delayTime)
 {
 #if defined(NDEBUG)
-    double startTime, stopTime;
+    jtest::StopWatch::time_point startTime, stopTime;
     double delayTimeLimit = (double)delayTime / 1000.0;
     volatile int sum = 0;
 
     printf("CPU warm-up begin ...\n");
     fflush(stdout);
-    startTime = jtest::StopWatch::timestamp();
-    double elapsedTime;
+    startTime = jtest::StopWatch::now();
+    jtest::StopWatch::duration_ms elapsedTime;
     do {
         for (int i = 0; i < 500; ++i) {
             sum += i;
@@ -94,11 +94,11 @@ void cpu_warmup(int delayTime)
                 sum -= j;
             }
         }
-        stopTime = jtest::StopWatch::timestamp();
-        elapsedTime = stopTime - startTime;
-    } while (elapsedTime < delayTimeLimit);
+        stopTime = jtest::StopWatch::now();
+        elapsedTime = (stopTime - startTime);
+    } while (elapsedTime.count() < delayTimeLimit);
 
-    printf("sum = %u, time: %0.3f ms\n", sum, elapsedTime * 1000.0);
+    printf("sum = %u, time: %0.3f ms\n", sum, elapsedTime.count() / 1000.0);
     printf("CPU warm-up end   ... \n\n");
     fflush(stdout);
 #endif // !_DEBUG
