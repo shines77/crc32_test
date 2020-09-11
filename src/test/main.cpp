@@ -76,6 +76,34 @@ static double clock_seconds()
     __COMPILER_BARRIER();
 }
 
+void cpu_warmup(int delayTime)
+{
+#if defined(NDEBUG)
+    double startTime, stopTime;
+    double delayTimeLimit = (double)delayTime / 1000.0;
+    volatile int sum = 0;
+
+    printf("CPU warm-up begin ...\n");
+    fflush(stdout);
+    startTime = jtest::StopWatch::timestamp();
+    double elapsedTime;
+    do {
+        for (int i = 0; i < 500; ++i) {
+            sum += i;
+            for (int j = 5000; j >= 0; --j) {
+                sum -= j;
+            }
+        }
+        stopTime = jtest::StopWatch::timestamp();
+        elapsedTime = stopTime - startTime;
+    } while (elapsedTime < delayTimeLimit);
+
+    printf("sum = %u, time: %0.3f ms\n", sum, elapsedTime * 1000.0);
+    printf("CPU warm-up end   ... \n\n");
+    fflush(stdout);
+#endif // !_DEBUG
+}
+
 void benchmark_crc32_bitwise(const char * data, size_t totalBytes)
 {
     jtest::StopWatch sw;
@@ -654,6 +682,8 @@ int main(int argn, char ** argv)
     else {
         printf("CpuId: SSE 4.2 is not supported.\n\n");
     }
+
+    cpu_warmup(1000);
 
     // initialize
     static const size_t kAdditionalBytes = (kTotalBytes / kStepBytes) + 1;
