@@ -80,7 +80,7 @@ void cpu_warmup(int delayTime)
 {
 #if defined(NDEBUG)
     jtest::StopWatch::time_point startTime, stopTime;
-    double delayTimeLimit = (double)delayTime / 1000.0;
+    double delayTimeLimit = (double)delayTime / 1.0;
     volatile int sum = 0;
 
     printf("CPU warm-up begin ...\n");
@@ -98,7 +98,7 @@ void cpu_warmup(int delayTime)
         elapsedTime = (stopTime - startTime);
     } while (elapsedTime.count() < delayTimeLimit);
 
-    printf("sum = %u, time: %0.3f ms\n", sum, elapsedTime.count() / 1000.0);
+    printf("sum = %u, time: %0.3f ms\n", sum, elapsedTime.count());
     printf("CPU warm-up end   ... \n\n");
     fflush(stdout);
 #endif // !_DEBUG
